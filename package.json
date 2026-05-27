@@ -1,0 +1,10 @@
+{
+  "name": "mcps-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MCPS portal frontend with Netlify function proxy to Apps Script",
+  "scripts": {
+    "dev": "netlify dev",
+    "deploy": "netlify deploy --prod"
+  }
+}
