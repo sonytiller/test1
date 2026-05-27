@@ -1,1826 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MCPS Portal</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCPS — Company Portal</title>
 <style>
-:root{
-  --teal:#0D3D3E;
-  --aqua:#21ADAD;
-  --aqua2:#5ED6D3;
-  --aquaLight:#E7F8F8;
-  --bg:#F4F6F7;
-  --card:#ffffff;
-  --text:#1F2A2A;
-  --muted:#6F7D80;
-  --border:#DDE5E7;
-  --soft:#EEF2F3;
-  --green:#0F6E56;
-  --red:#B73535;
-  --amber:#9B6A12;
-  --blue:#185FA5;
-  --shadow:0 1px 2px rgba(13,61,62,.08),0 8px 22px rgba(13,61,62,.04);
-}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --teal:#0D3D3E;--teal2:#0f4a4b;--aqua:#21ADAD;--aqua2:#5ED6D3;--aquaLight:#E7F8F8;
+    --bg:#F4F6F7;--card:#fff;--text:#1F2A2A;--muted:#6F7D80;--border:#DDE5E7;--soft:#EEF2F3;
+    --green:#0F6E56;--blue:#185FA5;--red:#B73535;--amber:#9B6A12;
+    --shadow:0 1px 2px rgba(13,61,62,.08),0 8px 22px rgba(13,61,62,.04)
+  }
+  body{font-family:"Open Sans",Arial,sans-serif;font-weight:400;background:var(--bg);color:var(--text);min-height:100vh}
+  button,input,select,textarea{font:inherit}
+  button{cursor:pointer}
+  .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+  .sidebar{background:var(--teal);color:#fff;position:sticky;top:0;height:100vh;border-right:1px solid rgba(255,255,255,.08)}
+  .brand{height:94px;padding:24px 22px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:13px;align-items:center}
+  .logo-box{width:44px;height:44px;border-radius:11px;background:#fff;display:grid;place-items:center;overflow:hidden;position:relative;color:var(--teal);font-weight:900}
+  .logo-box img{width:100%;height:100%;object-fit:contain;display:none}.logo-box.has-img img{display:block}.logo-box.has-img span{display:none}
+  .brand-title{font-weight:800;letter-spacing:.03em;font-size:14px}.brand-sub{font-size:11px;color:var(--aqua2);font-style:italic;margin-top:2px}
+  .nav-section{padding:18px 0 4px}.nav-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--aqua2);font-weight:900;padding:0 22px 8px}
+  .nav-item{height:38px;display:flex;align-items:center;gap:12px;color:#D7EEEE;text-decoration:none;padding:0 20px;border-left:4px solid transparent;font-size:14px;font-weight:650}
+  .nav-item:hover,.nav-item.active{background:rgba(33,173,173,.18);border-left-color:var(--aqua);color:#fff}
+  .ico{width:17px;text-align:center;opacity:.95}.pill{margin-left:auto;background:var(--aqua);color:var(--teal);font-size:11px;font-weight:900;border-radius:99px;padding:2px 8px}
+  .content{min-width:0;overflow-x:hidden}.topbar{min-height:62px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 30px;position:sticky;top:0;z-index:3}
+  .page-title{font-size:19px;color:var(--teal);font-weight:900}.page-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .top-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.role-select{border:1px solid var(--border);border-radius:99px;padding:9px 12px;background:var(--soft);color:var(--teal);font-size:13px;font-weight:800;max-width:220px}.user-chip{display:flex;gap:9px;align-items:center;border:1px solid var(--border);border-radius:99px;padding:7px 12px;background:#fff;white-space:nowrap}.avatar{width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--aqua);display:grid;place-items:center;color:var(--teal);font-weight:900;font-size:12px}.signout{font-size:11px;color:var(--muted);text-decoration:underline}
+  .main{width:100%;max-width:1440px;padding:28px 30px 60px}.view{display:none}.view.active{display:block}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+  .stat{padding:18px}.stat-num{font-size:31px;font-weight:900;color:var(--teal);letter-spacing:-.04em}.stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}.stat-note{font-size:12px;color:var(--aqua);font-weight:800;margin-top:8px}
+  .grid2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}.grid2.equal{grid-template-columns:1fr 1fr}.panel{padding:22px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.panel-title{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);font-weight:900}.small-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:800;color:var(--text)}.primary-btn{border:0;background:var(--teal);color:#fff;border-radius:9px;padding:9px 13px;font-weight:850;font-size:13px}.primary-btn:hover{background:#092F30}.aqua-btn{border:0;background:var(--aqua);color:var(--teal);border-radius:9px;padding:9px 13px;font-weight:900;font-size:13px}
+  .section-row,.person-row{display:grid;grid-template-columns:150px 1fr 48px 56px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--soft);font-size:13px}.section-name,.person-name{font-weight:850}.bar{height:7px;background:var(--soft);border:1px solid var(--border);border-radius:99px;overflow:hidden}.bar span{height:100%;display:block;background:var(--aqua);border-radius:99px}.pct{color:var(--aqua);font-weight:900;font-size:12px}.doc-count{color:var(--muted);font-size:12px;text-align:right}
+  .person-row{grid-template-columns:150px 1fr 48px 60px}.activity{list-style:none}.activity li{display:grid;grid-template-columns:16px 1fr 68px;gap:12px;border-bottom:1px solid var(--soft);padding:12px 0;font-size:13px}.dot{width:8px;height:8px;background:var(--aqua);border-radius:50%;margin-top:5px}.activity strong{color:var(--teal)}.time{font-size:11px;color:var(--muted);text-align:right}
+  table{width:100%;border-collapse:collapse;font-size:13px}th{background:var(--soft);color:var(--muted);letter-spacing:.09em;text-transform:uppercase;font-size:10px;text-align:left;padding:10px 12px}td{padding:11px 12px;border-bottom:1px solid var(--soft);vertical-align:middle}.empty{text-align:center;color:var(--muted);padding:24px!important}
+  .badge{display:inline-flex;align-items:center;border-radius:99px;padding:4px 9px;font-size:11px;font-weight:900;border:1px solid;white-space:nowrap}.b-read{background:#E1F5EE;color:var(--green);border-color:#91CDBB}.b-open{background:#E6F1FB;color:var(--blue);border-color:#9ABDDD}.b-pending{background:#F1EFE8;color:#5F5E5A;border-color:#CFC9B9}.b-rev{background:#FFF3D8;color:var(--amber);border-color:#E3C87D}.b-wait{background:#FFF8E6;color:#8A5A00;border-color:#E8C26D}.b-bad{background:#FCEBEB;color:var(--red);border-color:#ECB4B4}.b-aqua{background:var(--aquaLight);color:var(--teal);border-color:var(--aqua2)}
+  .workspace-grid{display:grid;grid-template-columns:340px 1fr;gap:16px}.section-list{padding:12px}.section-card{border:1px solid var(--border);background:#fff;border-radius:11px;padding:14px;margin-bottom:10px;cursor:pointer}.section-card.active{border:2px solid var(--aqua);background:#fbffff}.section-card h3{font-size:14px;color:var(--teal);margin-bottom:5px}.section-card p{font-size:12px;color:var(--muted);line-height:1.35}.section-meta{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--muted)}
+  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:9px;padding:10px;background:#fff;color:var(--text);font-size:13px}.field textarea{min-height:74px;resize:vertical}.file-drop{border:1.5px dashed var(--aqua);border-radius:12px;background:var(--aquaLight);padding:16px;text-align:center;color:var(--teal);font-weight:850;font-size:13px}.file-drop input{margin-top:9px;max-width:100%}
+  .doc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}.doc-card{border:1px solid var(--border);border-radius:12px;background:#fff;padding:14px}.doc-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.doc-title{font-weight:900;color:var(--teal);font-size:14px}.doc-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.55}.doc-instructions{font-size:12px;color:var(--text);background:var(--soft);border-radius:8px;padding:9px;margin:10px 0}.doc-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.doc-actions button{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 9px;font-size:12px;font-weight:850}.doc-actions .approve{background:#E1F5EE;color:var(--green)}.doc-actions .reject{background:#FCEBEB;color:var(--red)}.doc-actions .submit{background:var(--aqua);color:var(--teal);border-color:var(--aqua)}
+  .task-row{display:flex;gap:10px;align-items:center;border:1px solid var(--border);background:var(--soft);border-radius:9px;padding:10px;margin-bottom:7px}.task-row.done{background:#E1F5EE;border-color:#91CDBB}.task-row input{accent-color:var(--aqua)}.task-txt{font-size:13px}.task-row.done .task-txt{text-decoration:line-through;color:var(--muted)}
+  .notice{background:#FFF9E8;border:1px solid #E7D5A4;border-radius:12px;color:#6D5510;font-size:13px;padding:13px;margin-bottom:16px;line-height:1.45}.viewer-notice{background:#E7F8F8;border:1px solid var(--aqua2);color:var(--teal)}.locked{opacity:.55;pointer-events:none}.owner-only{display:block}.viewer-only{display:none}.submission-box{border:1px solid var(--border);background:#FBFFFF;border-radius:10px;padding:10px;margin-top:10px}.ack-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--teal);font-weight:750;margin:8px 0}.mini-textarea{width:100%;min-height:72px;border:1px solid var(--border);border-radius:8px;padding:9px;font-size:12px;resize:vertical}.role-note{font-size:11px;color:var(--muted);font-weight:750}.hidden{display:none!important}.muted{color:var(--muted)}
+
+  .viewer-hero{background:linear-gradient(135deg,#ffffff,#E7F8F8);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+  .viewer-hero h2{color:var(--teal);font-size:20px;margin-bottom:4px}.viewer-hero p{color:var(--muted);font-size:13px;line-height:1.45}.viewer-stats{display:flex;gap:10px;flex-wrap:wrap}.viewer-stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:9px 12px;min-width:92px}.viewer-stat strong{display:block;color:var(--teal);font-size:19px}.viewer-stat span{font-size:11px;color:var(--muted);font-weight:800}
+  .assignment-list{display:grid;grid-template-columns:1fr;gap:14px}.viewer-card{padding:0;overflow:hidden}.assignment-head{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:16px 18px;border-bottom:1px solid var(--soft);background:#fff}.chapter-tag{display:inline-flex;align-items:center;gap:6px;background:var(--aquaLight);border:1px solid var(--aqua2);color:var(--teal);border-radius:99px;padding:4px 9px;font-size:11px;font-weight:900;margin-bottom:8px}.subsection-line{font-size:12px;color:var(--muted);font-weight:800;margin-top:5px}.assignment-body{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);gap:14px;padding:16px 18px;background:#fbffff}.instructions-panel,.work-panel{border:1px solid var(--border);border-radius:12px;background:#fff;padding:13px}.instructions-panel h4,.work-panel h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:8px}.assignment-footer{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px;border-top:1px solid var(--soft);background:#fff}.assignment-footer button{border:1px solid var(--border);background:#fff;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:850}.assignment-footer .submit{background:var(--aqua);color:var(--teal);border-color:var(--aqua)}.assignment-footer .submit.waiting{background:#FFF3D8;color:#8A5A00;border-color:#E8C26D;cursor:not-allowed}.approval-status-strip{margin:0 18px 0;padding:12px 14px;border:1px solid #E8C26D;background:#FFF8E6;color:#6D4A00;border-radius:11px;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;line-height:1.4}.approval-status-strip strong{color:#0D3D3E}.approval-status-strip .stamp{color:#8A5A00;font-weight:900;white-space:nowrap}.workflow-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}.workflow-step{border:1px solid var(--border);border-radius:9px;background:#fff;padding:8px;text-align:center;font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.workflow-step.active{border-color:var(--aqua);color:var(--teal);background:var(--aquaLight)}.workflow-step.waiting{border-color:#E8C26D;color:#8A5A00;background:#FFF8E6}.review-banner{border:1px solid #E8C26D;background:#FFF8E6;color:#6D4A00;border-radius:10px;padding:10px;margin:10px 0;font-size:12px;line-height:1.45}
+  .preview-box{border:1px solid var(--border);background:var(--soft);border-radius:12px;min-height:260px;margin-top:10px;overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:13px;text-align:center}.preview-box iframe,.preview-box img{width:100%;height:460px;border:0;background:#fff;object-fit:contain}.preview-box pre{width:100%;height:360px;overflow:auto;text-align:left;background:#fff;padding:16px;white-space:pre-wrap;font-size:12px}.preview-empty{padding:22px}.preview-note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:6px}.chapter-folder{font-weight:900;color:var(--teal)}
+  @media(max-width:1200px){.viewer-workspace{grid-template-columns:220px minmax(0,1fr)}.viewer-progress-stats{grid-template-columns:repeat(2,minmax(104px,1fr))}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:1000px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.nav-section{display:inline-block;vertical-align:top}.cards,.grid2,.workspace-grid,.doc-grid,.assignment-body{grid-template-columns:1fr}.topbar{position:relative;align-items:flex-start}.main{padding:18px;max-width:none}.form-grid{grid-template-columns:1fr}.section-row,.person-row{grid-template-columns:120px 1fr 40px 48px}}
+  .viewer-simple{max-width:980px;margin:0 auto}.viewer-simple .panel-title{font-size:14px}.assignment-picker{margin-top:14px;max-width:520px}.viewer-doc-shell{margin-top:18px}.viewer-doc-shell .viewer-card{box-shadow:none}.viewer-doc-shell .assignment-head{border-radius:12px 12px 0 0}.viewer-doc-shell .assignment-body{grid-template-columns:minmax(0,1fr);}.viewer-doc-shell .work-panel{margin-top:0}.viewer-doc-shell .assignment-footer{border-radius:0 0 12px 12px}.viewer-empty{max-width:760px;margin:0 auto;text-align:center}.viewer-help{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px}.viewer-download-note{font-size:11px;color:var(--muted);margin-top:8px}
+  .admin-note{background:#EEF7F6;border:1px solid var(--aqua2);border-radius:10px;padding:12px;color:var(--teal);font-size:13px;line-height:1.45;margin-bottom:14px}.inline-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.danger-btn{border:1px solid #ECB4B4;background:#FCEBEB;color:var(--red);border-radius:8px;padding:7px 11px;font-size:12px;font-weight:850}.share-panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}.share-grid{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px;align-items:end}.share-panel .field select{width:100%}.share-result{font-size:12px;color:var(--green);font-weight:800;margin-top:10px}.viewer-locked .top-actions{display:none}.viewer-locked .sidebar{display:none}.viewer-locked .app{grid-template-columns:1fr}.viewer-locked .topbar{justify-content:flex-start}.viewer-locked .main{max-width:1120px;margin:0 auto}.viewer-locked .content{min-height:100vh}
+  .viewer-chapter{margin-bottom:18px}.viewer-chapter-title{font-size:18px;color:var(--teal);margin-bottom:10px;font-weight:700}.viewer-subsection{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;min-width:0}.viewer-subsection-head{padding:14px 16px;border-bottom:1px solid var(--soft);display:flex;justify-content:space-between;gap:12px;align-items:center}.viewer-subsection-title{color:var(--teal);font-size:14px;font-weight:700}.viewer-resource-grid{display:grid;grid-template-columns:minmax(340px,1fr);gap:10px;padding:14px}.viewer-resource-card{border:1px solid var(--border);border-radius:8px;padding:12px 14px;background:#fff;min-height:0;display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:16px;align-items:center;min-width:340px}.resource-type{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}.resource-title{font-size:15px;color:var(--teal);font-weight:700;margin-top:5px;overflow-wrap:break-word;word-break:normal;hyphens:auto}.resource-meta{font-size:12px;color:var(--muted);line-height:1.4;margin-top:4px;overflow-wrap:break-word;word-break:normal;hyphens:auto}.resource-actions{display:flex;gap:7px;flex-wrap:nowrap;justify-content:flex-end;align-items:center;margin-top:0;min-width:232px}.resource-actions button{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 9px;font-size:12px;white-space:nowrap}.viewer-resource-empty{border:1px dashed var(--border);border-radius:8px;padding:12px 14px;color:var(--muted);font-size:12px;min-height:0;min-width:340px;display:block;line-height:1.35}.section-return-upload{margin:0 0 14px;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}.section-return-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:13px 16px;border-bottom:1px solid var(--soft)}.section-return-title{font-size:14px;color:var(--teal);font-weight:750}.section-return-sub{font-size:12px;color:var(--muted);line-height:1.35;margin-top:3px}.section-return-grid{display:grid;grid-template-columns:minmax(240px,1fr) minmax(220px,.65fr) auto;gap:10px;align-items:end;padding:14px 16px}.section-return-grid textarea,.section-return-grid input[type=file]{width:100%;border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px;font:inherit;font-size:12px}.section-return-grid textarea{min-height:58px;resize:vertical}.section-return-grid label{display:block;font-size:11px;font-weight:750;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}.section-return-grid button{border:0;border-radius:8px;background:var(--teal);color:#fff;padding:9px 12px;font-weight:750;white-space:nowrap}.section-return-status{padding:0 16px 13px;color:var(--muted);font-size:12px;min-height:16px}.section-return-status.success{color:#166534}.section-return-status.error{color:#b42318}.settings-table input,.settings-table select{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px;background:#fff}.settings-table .small-cell{width:86px}.settings-table .actions-cell{width:92px}.preview-modal{position:fixed;inset:0;background:rgba(13,61,62,.45);display:grid;place-items:center;z-index:40;padding:18px}.preview-modal-panel{width:min(980px,100%);height:min(86vh,820px);background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 22px 70px rgba(13,61,62,.22);display:grid;grid-template-rows:auto 1fr}.preview-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}.preview-modal-body{padding:14px;overflow:auto}.preview-modal .preview-box{min-height:100%;height:100%;margin:0}.preview-modal .preview-box iframe,.preview-modal .preview-box img{height:calc(86vh - 110px)}
+  .viewer-canvas-head{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:18px}.viewer-canvas-head h2{font-size:20px;color:var(--teal);font-weight:700;margin-bottom:4px}.viewer-canvas-head p{font-size:13px;color:var(--muted);line-height:1.45}.canvas-module{margin-bottom:22px}
+  .viewer-progress{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:16px}.viewer-progress-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap}.viewer-progress-title{font-size:15px;color:var(--teal);font-weight:800}.viewer-progress-sub{font-size:12px;color:var(--muted);margin-top:3px}.viewer-progress-stats{display:grid;grid-template-columns:repeat(4,minmax(104px,1fr));gap:10px;min-width:min(100%,520px)}.viewer-progress-stat{border:1px solid var(--border);border-radius:10px;padding:9px 12px;background:#fff;min-width:0}.viewer-progress-stat strong{display:block;font-size:20px;color:var(--teal)}.viewer-progress-stat span{font-size:11px;color:var(--muted);font-weight:800}.viewer-progress-bar{height:11px;background:var(--soft);border:1px solid var(--border);border-radius:999px;overflow:hidden}.viewer-progress-bar span{display:block;height:100%;background:var(--aqua);border-radius:999px}.viewer-progress-foot{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:12px;color:var(--muted);font-weight:700;flex-wrap:wrap}
+  .viewer-workspace{display:grid;grid-template-columns:minmax(220px,260px) minmax(0,1fr);gap:16px;align-items:start}.viewer-section-nav{position:sticky;top:84px;align-self:start;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;min-width:0}.viewer-section-nav-title{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--teal);font-weight:900;margin-bottom:10px}.viewer-section-link{display:block;width:100%;border:1px solid var(--border);background:#fff;border-radius:9px;text-align:left;padding:10px;margin-bottom:8px;color:var(--text);min-width:0}.viewer-section-link:hover{border-color:var(--aqua);background:var(--aquaLight)}.viewer-section-link strong{display:block;color:var(--teal);font-size:13px;overflow-wrap:anywhere}.viewer-section-link span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.viewer-section-mini-bar{height:6px;background:var(--soft);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:8px}.viewer-section-mini-bar i{display:block;height:100%;background:var(--aqua);border-radius:999px}.viewer-section-content{min-width:0}
+  details.viewer-chapter{background:transparent;margin-bottom:14px}details.viewer-chapter>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;font-size:18px;color:var(--teal);font-weight:700;margin-bottom:10px}details.viewer-chapter>summary::-webkit-details-marker,details.viewer-subsection>summary::-webkit-details-marker{display:none}.collapse-cue{font-size:12px;color:var(--muted);font-weight:700}.collapse-cue::before{content:"Show"}details[open]>.viewer-chapter-summary .collapse-cue::before,details[open]>.viewer-subsection-summary .collapse-cue::before{content:"Hide"}.viewer-subsection-summary{padding:14px 16px;border-bottom:1px solid var(--soft);display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer}.viewer-subsection-summary .doc-count{margin-left:auto}.task-table td,.task-table th{vertical-align:middle}.task-table tr.task-row{display:table-row;background:#fff;border:0;border-radius:0;padding:0;margin:0}.task-table tr.task-row.done td{background:#E1F5EE}.task-owner{font-weight:800;color:var(--teal)}.task-section{color:var(--muted);font-size:12px}
+  .admin-upload-launch{position:fixed;left:22px;bottom:22px;z-index:30;border:0;background:var(--aqua);color:var(--teal);border-radius:999px;padding:12px 16px;font-size:13px;font-weight:900;box-shadow:0 8px 24px rgba(13,61,62,.18)}.admin-upload-launch:hover{background:var(--aqua2)}.upload-modal{position:fixed;inset:0;background:rgba(13,61,62,.45);display:grid;place-items:center;z-index:45;padding:18px}.upload-modal-panel{width:min(760px,100%);max-height:88vh;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 22px 70px rgba(13,61,62,.22)}.upload-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border)}.upload-modal-body{padding:18px}.compact-upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.compact-upload-grid .field.full{grid-column:1/-1}.upload-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+  @media(max-width:1000px){.viewer-resource-grid{grid-template-columns:minmax(0,1fr)}.viewer-progress-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.viewer-resource-card{grid-template-columns:1fr;min-width:0}.resource-actions{justify-content:flex-start;min-width:0;margin-top:10px;flex-wrap:wrap}.viewer-resource-empty{min-width:0}.section-return-grid{grid-template-columns:1fr}.section-return-grid button{justify-self:start}}
+  @media(max-width:1000px){.viewer-workspace{grid-template-columns:1fr}.viewer-section-nav{position:relative;top:auto}}
+  @media(max-width:700px){.topbar{padding:12px 16px;flex-direction:column}.top-actions{justify-content:flex-start;width:100%}.role-select{max-width:100%;width:100%}.user-chip{width:100%;border-radius:12px}.viewer-progress-stats{grid-template-columns:1fr}.viewer-resource-grid{padding:10px}.panel{padding:16px}.main{padding:14px}.cards{grid-template-columns:1fr}}
+  @media(max-width:1000px){.admin-upload-launch{left:16px;bottom:16px}.compact-upload-grid{grid-template-columns:1fr}}
 
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Arial,"Open Sans",sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-
-.login-screen{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(135deg,#0D3D3E,#092F30);
-  display:grid;
-  place-items:center;
-  z-index:9999;
-  padding:20px;
-}
-
-.login-card{
-  width:min(440px,100%);
-  background:#fff;
-  border-radius:18px;
-  padding:28px;
-  box-shadow:0 24px 80px rgba(0,0,0,.28);
-}
-
-.login-logo{
-  width:54px;
-  height:54px;
-  border-radius:12px;
-  background:var(--aqua);
-  color:var(--teal);
-  display:grid;
-  place-items:center;
-  font-weight:900;
-  margin-bottom:14px;
-}
-
-.login-card h1{
-  color:var(--teal);
-  font-size:22px;
-  margin:0 0 6px;
-}
-
-.login-card p{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.45;
-  margin:0 0 18px;
-}
-
-.login-card label{
-  display:block;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--muted);
-  font-weight:900;
-  margin:12px 0 5px;
-}
-
-.login-card input{
-  width:100%;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px;
-  background:#fff;
-}
-
-.login-card button{
-  width:100%;
-  margin-top:16px;
-  border:0;
-  background:var(--teal);
-  color:#fff;
-  border-radius:10px;
-  padding:12px;
-  font-weight:900;
-}
-
-#loginError{
-  font-size:12px;
-  color:var(--red);
-  margin-top:10px;
-  min-height:16px;
-}
-
-.app{
-  display:grid;
-  grid-template-columns:260px minmax(0,1fr);
-  min-height:100vh;
-}
-
-.sidebar{
-  background:var(--teal);
-  color:#fff;
-  min-height:100vh;
-}
-
-.brand{
-  height:92px;
-  padding:22px;
-  border-bottom:1px solid rgba(255,255,255,.1);
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.logo-box{
-  width:44px;
-  height:44px;
-  border-radius:10px;
-  background:#fff;
-  color:var(--teal);
-  display:grid;
-  place-items:center;
-  font-weight:900;
-  overflow:hidden;
-  flex:0 0 auto;
-}
-
-.logo-box img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:none;
-}
-
-.logo-box.has-img img{display:block}
-.logo-box.has-img span{display:none}
-
-.brand-title{
-  font-weight:900;
-  font-size:14px;
-}
-
-.brand-sub{
-  font-size:11px;
-  color:var(--aqua2);
-  margin-top:3px;
-}
-
-.nav{
-  padding:18px 0;
-}
-
-.nav-label{
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.16em;
-  color:var(--aqua2);
-  font-weight:900;
-  padding:0 22px 8px;
-}
-
-.nav button{
-  width:100%;
-  height:40px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:transparent;
-  border:0;
-  color:#D7EEEE;
-  padding:0 20px;
-  border-left:4px solid transparent;
-  font-weight:700;
-  text-align:left;
-}
-
-.nav button:hover,
-.nav button.active{
-  background:rgba(33,173,173,.18);
-  border-left-color:var(--aqua);
-  color:#fff;
-}
-
-.main-wrap{min-width:0}
-
-.topbar{
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  min-height:64px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 24px;
-  gap:16px;
-  position:sticky;
-  top:0;
-  z-index:2;
-}
-
-.page-title{
-  font-size:20px;
-  color:var(--teal);
-  font-weight:900;
-}
-
-.page-sub{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:2px;
-}
-
-.top-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.user-chip{
-  display:flex;
-  gap:9px;
-  align-items:center;
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:7px 12px;
-  background:#fff;
-}
-
-.avatar{
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:var(--aqua);
-  display:grid;
-  place-items:center;
-  color:var(--teal);
-  font-weight:900;
-  font-size:12px;
-}
-
-.signout{
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  font-size:11px;
-  text-decoration:underline;
-  padding:0;
-}
-
-.live-dot{
-  width:13px;
-  height:13px;
-  border-radius:50%;
-  border:2px solid #fff;
-  box-shadow:0 0 0 1px var(--border),0 0 0 4px rgba(111,125,128,.08);
-  background:var(--muted);
-  cursor:pointer;
-}
-
-.live-dot.ok{background:var(--green)}
-.live-dot.bad{background:var(--red)}
-.live-dot.syncing{background:var(--amber)}
-
-.content{
-  padding:22px;
-  max-width:1500px;
-  margin:0 auto;
-}
-
-.view{display:none}
-.view.active{display:block}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px;
-  margin-bottom:16px;
-}
-
-.card{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  box-shadow:var(--shadow);
-}
-
-.stat{
-  padding:16px;
-}
-
-.stat-num{
-  font-size:29px;
-  font-weight:900;
-  color:var(--teal);
-}
-
-.stat-lbl{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:800;
-}
-
-.panel{
-  padding:18px;
-}
-
-.panel-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:14px;
-}
-
-.panel-title{
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:.09em;
-  color:var(--teal);
-  font-weight:900;
-}
-
-.btn{
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:8px;
-  padding:8px 11px;
-  font-weight:800;
-  font-size:12px;
-}
-
-.btn.primary{
-  background:var(--teal);
-  color:#fff;
-  border-color:var(--teal);
-}
-
-.btn.aqua{
-  background:var(--aqua);
-  color:var(--teal);
-  border-color:var(--aqua);
-}
-
-.btn.bad{
-  background:#FCEBEB;
-  color:var(--red);
-  border-color:#ECB4B4;
-}
-
-.btn.good{
-  background:#E1F5EE;
-  color:var(--green);
-  border-color:#91CDBB;
-}
-
-.table-wrap{
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:#fff;
-  overflow:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-  table-layout:fixed;
-}
-
-th{
-  background:var(--soft);
-  color:var(--muted);
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  text-align:left;
-  padding:11px;
-}
-
-td{
-  padding:11px;
-  border-top:1px solid var(--soft);
-  vertical-align:top;
-  overflow-wrap:anywhere;
-}
-
-.empty{
-  padding:22px!important;
-  text-align:center;
-  color:var(--muted);
-}
-
-.doc-link{
-  color:var(--teal);
-  font-weight:900;
-  text-decoration:underline;
-}
-
-.small{
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.45;
-}
-
-.badge{
-  display:inline-flex;
-  border:1px solid;
-  border-radius:999px;
-  padding:4px 8px;
-  font-size:11px;
-  font-weight:900;
-  white-space:nowrap;
-}
-
-.b-assigned{background:#F1EFE8;color:#5F5E5A;border-color:#CFC9B9}
-.b-read{background:#E6F1FB;color:var(--blue);border-color:#9ABDDD}
-.b-wait{background:#FFF8E6;color:#8A5A00;border-color:#E8C26D}
-.b-done{background:#E1F5EE;color:var(--green);border-color:#91CDBB}
-.b-rev{background:#FCEBEB;color:var(--red);border-color:#ECB4B4}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
-
-.field.full{grid-column:1/-1}
-
-.field label{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--muted);
-  font-weight:900;
-}
-
-.field input,
-.field select,
-.field textarea{
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:10px;
-  background:#fff;
-  width:100%;
-}
-
-.field textarea{
-  min-height:72px;
-  resize:vertical;
-}
-
-.notice{
-  background:var(--aquaLight);
-  border:1px solid var(--aqua2);
-  color:var(--teal);
-  border-radius:12px;
-  padding:12px;
-  font-size:13px;
-  margin-bottom:14px;
-}
-
-.upload-box{
-  border:1px solid var(--border);
-  background:#fbffff;
-  border-radius:10px;
-  padding:9px;
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:8px;
-  align-items:center;
-}
-
-.upload-box input[type=file]{
-  width:100%;
-  font-size:12px;
-}
-
-.upload-note{
-  grid-column:1/-1;
-  width:100%;
-  min-height:36px;
-  resize:vertical;
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:7px;
-  font-size:12px;
-}
-
-.status-msg{
-  grid-column:1/-1;
-  font-size:11px;
-  color:var(--muted);
-}
-
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.option-list{
-  display:grid;
-  gap:8px;
-}
-
-.option-row{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:8px;
-}
-
-.option-row input{
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:9px;
-}
-
-.toast{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:99999;
-  padding:11px 14px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:900;
-  box-shadow:0 10px 30px rgba(13,61,62,.18);
-  display:none;
-}
-
-.toast.ok{
-  background:#E1F5EE;
-  color:var(--green);
-  border:1px solid #91CDBB;
-}
-
-.toast.bad{
-  background:#FCEBEB;
-  color:var(--red);
-  border:1px solid #ECB4B4;
-}
-
-.editing-banner{
-  background:#FFF8E6;
-  color:#8A5A00;
-  border:1px solid #E8C26D;
-  padding:10px 12px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:800;
-  margin-bottom:14px;
-}
-
-@media(max-width:1050px){
-  .app{grid-template-columns:1fr}
-  .sidebar{min-height:auto}
-  .cards{grid-template-columns:repeat(2,1fr)}
-  .form-grid,.grid2{grid-template-columns:1fr}
-  .table-wrap table{min-width:1000px}
-  .content{padding:14px}
-  .topbar{position:relative}
-}
 </style>
 </head>
-
 <body>
-
-<div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <div class="login-logo">MC</div>
-    <h1>MCPS Portal Login</h1>
-    <p>Enter your assigned name and access code. Admins can manage the portal. Viewers only see their assigned documents.</p>
-
-    <label>Name</label>
-    <input id="loginName" placeholder="Example: Antonio Siller" autocomplete="username">
-
-    <label>Access Code</label>
-    <input id="loginCode" type="password" placeholder="Enter access code" autocomplete="current-password" onkeydown="if(event.key==='Enter') login()">
-
-    <button onclick="login()">Log In</button>
-    <div id="loginError"></div>
-
-    <div class="small" style="margin-top:14px">
-      Admin: Antonio Siller / 9981<br>
-      Viewer test: Antonio Siller Viewer / 9982
-    </div>
-  </div>
-</div>
-
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="logo-box" id="logoBox">
-        <span>MC</span>
-        <img id="logoImg" alt="Logo">
-      </div>
-      <div>
-        <div class="brand-title">MCPS PORTAL</div>
-        <div class="brand-sub">Clean Pools. Done Right.</div>
-      </div>
+      <div class="logo-box" id="logoBox"><span>MC</span><img id="logoImg" alt="MCPS Logo"></div>
+      <div><div class="brand-title">MCPS PORTAL</div><div class="brand-sub">Clean Pools. Done Right.</div></div>
     </div>
-
-    <div class="nav">
-      <div class="nav-label">Workspace</div>
-      <button data-view="dashboard" class="active admin-only" onclick="go('dashboard')">▣ Dashboard</button>
-      <button data-view="documents" onclick="go('documents')">▤ Documents</button>
-      <button data-view="create" class="admin-only" onclick="go('create')">＋ Create Assignment</button>
-      <button data-view="approvals" class="admin-only" onclick="go('approvals')">✥ Review Queue</button>
-      <button data-view="people" class="admin-only" onclick="go('people')">● People</button>
-      <button data-view="settings" class="admin-only" onclick="go('settings')">⚙ Settings</button>
+    <div class="nav-section"><div class="nav-label">Workspace</div>
+      <a class="nav-item active" data-view="dashboard" data-owner-only><span class="ico">▣</span>Dashboard</a>
+      <a class="nav-item" data-view="documents"><span class="ico">▤</span>Documents <span class="pill" id="navDocCount">0</span></a>
+      <a class="nav-item" data-view="tasks"><span class="ico">✓</span>Tasks</a>
+      <a class="nav-item" data-view="library"><span class="ico">□</span>File Library</a>
+    </div>
+    <div class="nav-section"><div class="nav-label">Oversight</div>
+      <a class="nav-item" data-view="approvals" data-owner-only><span class="ico">✥</span>Approvals <span class="pill" id="navApprovalCount">0</span></a>
+      <a class="nav-item" data-view="read" data-owner-only><span class="ico">◎</span>Read Tracking</a>
+      <a class="nav-item" data-view="activity" data-owner-only><span class="ico">↝</span>Activity Log</a>
+    </div>
+    <div class="nav-section"><div class="nav-label">Org</div>
+      <a class="nav-item" data-view="team" data-owner-only><span class="ico">●</span>Team & Roles</a>
+      <a class="nav-item" data-view="settings" data-owner-only><span class="ico">⚙</span>Settings</a>
     </div>
   </aside>
 
-  <main class="main-wrap">
+  <main class="content">
     <header class="topbar">
-      <div>
-        <div id="pageTitle" class="page-title">Portal</div>
-        <div id="pageSub" class="page-sub">Individual login workspace</div>
-      </div>
-
+      <div><div class="page-title" id="pageTitle">Dashboard</div><div class="page-sub" id="pageSub">Overview of the company's progress</div></div>
       <div class="top-actions">
-        <button id="liveDot" class="live-dot" onclick="loadData(false)" title="Live status"></button>
-        <div class="user-chip">
-          <div class="avatar" id="userAvatar">--</div>
-          <div>
-            <div id="loggedInName" style="font-size:13px;font-weight:750">Not logged in</div>
-            <button class="signout" onclick="logout()">Sign out</button>
-          </div>
-        </div>
+        <select class="role-select" id="roleSelect" onchange="setRole(this.value)"><option>Admin</option><option>Viewer</option></select><select class="role-select" id="userSelect" onchange="setCurrentUser(this.value)"></select>
+        <div class="user-chip"><div class="avatar">AS</div><div><div style="font-size:13px;font-weight:750">Antonio Siller</div><div class="signout">local prototype</div></div></div>
       </div>
     </header>
 
-    <div class="content">
-      <section id="dashboardView" class="view active"></section>
-      <section id="documentsView" class="view"></section>
-      <section id="createView" class="view"></section>
-      <section id="approvalsView" class="view"></section>
-      <section id="peopleView" class="view"></section>
-      <section id="settingsView" class="view"></section>
+    <div class="main">
+      <section class="view active" id="dashboardView"></section>
+      <section class="view" id="documentsView"></section>
+      <section class="view" id="tasksView"></section>
+      <section class="view" id="libraryView"></section>
+      <section class="view" id="approvalsView"></section>
+      <section class="view" id="readView"></section>
+      <section class="view" id="activityView"></section>
+      <section class="view" id="teamView"></section>
+      <section class="view" id="settingsView"></section>
     </div>
   </main>
 </div>
-
-<div id="toast" class="toast"></div>
+<button class="admin-upload-launch hidden" id="adminUploadButton" onclick="openAdminUploadModal()">+ Upload Document</button>
 
 <script>
 /****************************************************
- MCPS PORTAL FRONTEND — NETLIFY VERSION
- Source of truth:
- - Settings/data save to Google Sheets through Apps Script.
- - This frontend calls Netlify Function, not Apps Script directly.
+ MCPS PREVIEW 5 + DOC PORTAL TEST 1 MERGE
+ - Uses the full admin interface style/layout from doc portal test 1
+ - Uses login + Apps Script live backend from preview 5
 ****************************************************/
-
 const API_URL = "/.netlify/functions/portal-api";
-const SESSION_KEY = "mcps_session_token_v5";
-
-let sessionToken = localStorage.getItem(SESSION_KEY) || "";
+const SESSION_KEY = 'mcps_admin_editable_session_v1';
+let sessionToken = localStorage.getItem(SESSION_KEY) || '';
 let currentUser = null;
-let currentView = "dashboard";
+let currentView = 'dashboard';
 let isSyncing = false;
-let autoSyncTimer = null;
+let liveSyncTimer = null;
+const AUTO_SYNC_MS = 30000;
 
-let DATA = {
-  settings:{},
-  sections:[],
-  options:{
-    teams:[],
-    departments:[],
-    fileGroups:[],
-    documentTypes:[],
-    actionOptions:[]
-  },
-  users:[],
-  assignments:[],
-  activity:[]
+const DEFAULT_OPTIONS = {
+  teams:['Ownership','Sales & Marketing','Operations','Admin & Finance','Administration'],
+  departments:['Ownership','Sales & Marketing','Operations','Admin & Finance','Administration','Customer Experience','Marketing','Field Work'],
+  fileGroups:['Templates','Working Documents','Needs Revision','Approved Final Documents','Archived Versions'],
+  documentTypes:['Master Template','Example Document','Reference','Working File','Final Version'],
+  actionOptions:[
+    {value:'read',label:'Read only'},
+    {value:'fill',label:'Fill out / edit response'},
+    {value:'review',label:'Review'},
+    {value:'upload',label:'Upload completed version'},
+    {value:'approve',label:'Sign / approve'}
+  ]
 };
 
-const $ = id => document.getElementById(id);
+let state = {
+  settings:{},
+  sections:[],
+  people:[],
+  options:JSON.parse(JSON.stringify(DEFAULT_OPTIONS)),
+  documents:[],
+  activity:[],
+  uploads:[],
+  logo:'',
+  selectedSection:1
+};
 
-function esc(s = ""){
-  return String(s ?? "").replace(/[&<>"']/g, m => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[m]));
-}
-
-function initials(name){
-  return String(name || "--")
-    .split(" ")
-    .filter(Boolean)
-    .map(x => x[0])
-    .slice(0,2)
-    .join("")
-    .toUpperCase() || "--";
-}
-
-function isAdmin(){
-  return currentUser && currentUser.role === "Admin";
-}
-
-function isEditingView(){
-  return ["settings","people","create"].includes(currentView);
-}
-
-function setLive(type,msg = ""){
-  const d = $("liveDot");
-  if(!d) return;
-  d.className = "live-dot " + (type || "");
-  d.title = msg || "Live status";
-}
-
-function toast(message,type = "ok"){
-  const el = $("toast");
-  el.textContent = message;
-  el.className = "toast " + type;
-  el.style.display = "block";
-
-  clearTimeout(el._timer);
-
-  el._timer = setTimeout(() => {
-    el.style.display = "none";
-  }, 2800);
-}
-
-function showLogin(){
-  $("loginScreen").classList.remove("hidden");
-}
-
-function hideLogin(){
-  $("loginScreen").classList.add("hidden");
-}
-
+function $(id){return document.getElementById(id)}
+function esc(s=''){return String(s ?? '').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));}
+function initials(name){return String(name||'').split(' ').filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase()||'U'}
+function isOwner(){return !!currentUser && (currentUser.role === 'Admin' || String(currentUser.name||'').trim().toLowerCase()==='antonio siller')}
+function visibleDocs(){return isOwner()?state.documents:state.documents.filter(d=>d.assigned===currentUser?.name)}
+function sectionById(id){return state.sections.find(s=>Number(s.id)===Number(id))}
+function docsForSection(id){return state.documents.filter(d=>Number(d.sectionId)===Number(id))}
+function getOptionList(key){return (state.options && Array.isArray(state.options[key])) ? state.options[key] : (DEFAULT_OPTIONS[key]||[])}
+function actionLabel(value){const found=getOptionList('actionOptions').find(a=>a.value===value);return found?found.label:(value||'Read only')}
+function nowShort(){return new Date().toLocaleString()}
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result||'').split(',')[1]||'');r.onerror=rej;r.readAsDataURL(file);});}
 async function api(payload){
-  const finalPayload = {
-    ...payload,
-    sessionToken: sessionToken || payload.sessionToken || ""
-  };
-
-  let response;
-  let text;
-
+  const finalPayload={...payload, sessionToken: sessionToken || payload.sessionToken || ''};
+  let res,text;
   try{
-    response = await fetch(API_URL,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify(finalPayload)
-    });
-
-    text = await response.text();
-
-  }catch(error){
-    throw new Error("Website could not reach the Netlify backend function.");
+    res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(finalPayload)});
+    text=await res.text();
+  }catch(e){
+    throw new Error('Website could not reach the Netlify backend function.');
   }
-
   let json;
-
-  try{
-    json = JSON.parse(text);
-  }catch(error){
-    throw new Error("Backend did not return JSON: " + text.slice(0,250));
-  }
-
-  if(!json.success){
-    throw new Error(json.message || "Backend request failed.");
-  }
-
+  try{json=JSON.parse(text)}catch(e){throw new Error('Backend did not return JSON: '+String(text||'').slice(0,250));}
+  if(!json.success) throw new Error(json.message || 'Backend request failed.');
   return json;
 }
-
-function fileToBase64(file){
-  return new Promise((resolve,reject) => {
-    const r = new FileReader();
-
-    r.onload = () => resolve(String(r.result).split(",")[1]);
-    r.onerror = reject;
-
-    r.readAsDataURL(file);
-  });
+function toast(message,type='ok'){
+  let el=$('mcpsToast');
+  if(!el){el=document.createElement('div');el.id='mcpsToast';el.style.cssText='position:fixed;right:18px;bottom:18px;z-index:100000;border-radius:10px;padding:11px 14px;font-size:12px;font-weight:850;box-shadow:0 10px 30px rgba(13,61,62,.18);';document.body.appendChild(el)}
+  el.textContent=message;el.style.display='block';
+  el.style.background=type==='bad'?'#FCEBEB':'#E1F5EE';el.style.color=type==='bad'?'#B73535':'#0F6E56';el.style.border=type==='bad'?'1px solid #ECB4B4':'1px solid #91CDBB';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.display='none',2700);
+}
+function setLiveDot(type,msg){
+  let dot=$('liveDot');
+  if(!dot){dot=document.createElement('button');dot.id='liveDot';dot.type='button';dot.onclick=()=>loadPortalData(false);dot.style.cssText='width:13px;height:13px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #DDE5E7,0 0 0 4px rgba(111,125,128,.08);background:#6F7D80;cursor:pointer;margin-left:2px;';document.querySelector('.top-actions')?.prepend(dot)}
+  dot.title=msg||'Live status';
+  dot.style.background=type==='ok'?'#0F6E56':type==='bad'?'#B73535':type==='syncing'?'#9B6A12':'#6F7D80';
 }
 
-/****************************************************
- LOGIN
-****************************************************/
-
+function injectLogin(){
+  if($('mcpsLoginScreen')) return;
+  const style=document.createElement('style');
+  style.textContent=`
+    .mcps-login-screen{position:fixed;inset:0;z-index:99990;display:grid;place-items:center;background:linear-gradient(135deg,#0D3D3E,#092F30);padding:24px}
+    .mcps-login-card{width:min(430px,100%);background:#fff;border:1px solid #DDE5E7;border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.28);padding:26px}
+    .mcps-login-logo{width:52px;height:52px;border-radius:14px;background:#21ADAD;color:#0D3D3E;display:grid;place-items:center;font-weight:900;margin-bottom:14px}
+    .mcps-login-title{color:#0D3D3E;font-size:22px;font-weight:900;margin-bottom:4px}.mcps-login-sub{color:#6F7D80;font-size:13px;line-height:1.45;margin-bottom:18px}
+    .mcps-login-field{margin-bottom:12px}.mcps-login-field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#6F7D80;font-weight:900;margin-bottom:5px}
+    .mcps-login-field input{width:100%;border:1px solid #DDE5E7;border-radius:10px;padding:12px;font-size:14px}.mcps-login-button{width:100%;border:0;border-radius:10px;background:#0D3D3E;color:#fff;padding:12px;font-weight:900;margin-top:6px}
+    .mcps-login-error{margin-top:12px;color:#B73535;font-size:12px;font-weight:800;min-height:16px}.mcps-hidden{display:none!important}
+    .admin-setup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}.settings-table textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px;background:#fff;resize:vertical;min-height:64px}.settings-table input,.settings-table select{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px;background:#fff}.settings-table .small-cell{width:86px}.settings-table .actions-cell{width:94px}.viewer-locked .sidebar{display:block!important}.viewer-locked .app{grid-template-columns:260px 1fr!important}.viewer-locked .top-actions{display:flex!important}
+    @media(max-width:1000px){.admin-setup-grid{grid-template-columns:1fr}.viewer-locked .app{grid-template-columns:1fr!important}}
+  `;
+  document.head.appendChild(style);
+  const screen=document.createElement('div');
+  screen.id='mcpsLoginScreen';screen.className='mcps-login-screen';
+  screen.innerHTML=`<div class="mcps-login-card"><div class="mcps-login-logo">MC</div><div class="mcps-login-title">MCPS Portal Login</div><div class="mcps-login-sub">Enter your assigned name and access code. Admins get the full portal. Viewers only see assigned documents.</div><div class="mcps-login-field"><label>Name</label><input id="loginName" placeholder="Example: Antonio Siller" autocomplete="username"></div><div class="mcps-login-field"><label>Access Code</label><input id="loginCode" type="password" placeholder="Example: 9981" autocomplete="current-password" onkeydown="if(event.key==='Enter') login()"></div><button class="mcps-login-button" onclick="login()">Log In</button><div class="mcps-login-error" id="loginError"></div><div style="margin-top:16px;font-size:11px;color:#6F7D80;line-height:1.45">Admin: Antonio Siller / 9981<br>Viewer test: Antonio Siller Viewer / 9982</div></div>`;
+  document.body.appendChild(screen);
+}
+function showLogin(){injectLogin();$('mcpsLoginScreen')?.classList.remove('mcps-hidden')}
+function hideLogin(){$('mcpsLoginScreen')?.classList.add('mcps-hidden')}
 async function login(){
-  const name = $("loginName").value.trim();
-  const accessCode = $("loginCode").value.trim();
-
-  $("loginError").textContent = "";
-
-  if(!name || !accessCode){
-    $("loginError").textContent = "Enter your name and access code.";
-    return;
-  }
-
-  try{
-    const res = await api({
-      action:"login",
-      name,
-      accessCode
-    });
-
-    sessionToken = res.sessionToken;
-    currentUser = res.user;
-
-    localStorage.setItem(SESSION_KEY, sessionToken);
-
-    hideLogin();
-    await loadData(false);
-    startAutoSync();
-
-  }catch(err){
-    $("loginError").textContent = err.message || "Login failed.";
-    setLive("bad","Login failed");
-  }
+  const name=$('loginName')?.value.trim();const accessCode=$('loginCode')?.value.trim();const err=$('loginError');if(err)err.textContent='';
+  if(!name||!accessCode){if(err)err.textContent='Enter your name and access code.';return}
+  try{const res=await api({action:'login',name,accessCode,sessionToken:''});sessionToken=res.sessionToken;currentUser=res.user;localStorage.setItem(SESSION_KEY,sessionToken);hideLogin();await loadPortalData(false);startLiveSync();}
+  catch(e){if(err)err.textContent=e.message;setLiveDot('bad','Login failed')}
 }
+async function logout(){try{if(sessionToken) await api({action:'logout'});}catch(e){}sessionToken='';currentUser=null;localStorage.removeItem(SESSION_KEY);stopLiveSync();showLogin();}
 
-async function logout(){
-  try{
-    if(sessionToken){
-      await api({ action:"logout" });
-    }
-  }catch(e){}
-
-  sessionToken = "";
-  currentUser = null;
-
-  localStorage.removeItem(SESSION_KEY);
-  stopAutoSync();
-  setLive("", "Signed out");
-  showLogin();
+function normalizeData(data){
+  currentUser=data.user||currentUser;
+  state.settings=data.settings||{};
+  state.logo=state.settings.logoDataUrl||'';
+  state.sections=(data.sections||[]).map(s=>({id:Number(s.id||s['Section ID']),title:s.title||s.Title||'',owner:s.owner||s.Owner||'',department:s.department||s.Department||'',pct:Number(s.pct||s.Progress||0),desc:s.desc||s.Description||'',subsections:Array.isArray(s.subsections)?s.subsections:safeArray(s.Subsections),folderId:s.folderId||s['Folder ID']||''})).filter(s=>s.id);
+  state.people=(data.users||[]).map(u=>({userId:u['User ID']||u.userId||'',name:u.Name||u.name||'',email:u.Email||u.email||'',role:u.Role||u.role||'Viewer',team:u.Team||u.team||'',department:u.Department||u.department||'',active:u.Active||u.active||'TRUE',accessCode:u['Access Code']||u.accessCode||''}));
+  state.options={...JSON.parse(JSON.stringify(DEFAULT_OPTIONS)),...(data.options||{})};
+  state.documents=(data.assignments||[]).map(a=>({id:a['Assignment ID']||a.id||'',sectionId:Number(a['Section ID']||a.sectionId||sectionIdFromName(a.Section)),section:a.Section||a.section||'',subsection:a.Subsection||a.subsection||'',department:a.Department||a.department||'',title:a['Document Name']||a.title||'',assigned:a['Assigned To']||a.assigned||'',due:a['Due Date']||a.due||'',status:a.Status||a.status||'Assigned',instructions:a.Instructions||a.instructions||'',action:a['Required Action']||a.action||'read',docType:a['Document Type']||a.docType||'Working File',folder:a['File Group']||a.folder||'Working Documents',fileUrl:a['Assignment File URL']||a.fileUrl||'',fileId:a['Assignment File ID']||'',submittedFileUrl:a['Submitted File URL']||'',submittedFileId:a['Submitted File ID']||'',responseText:a['Viewer Notes']||'',adminNotes:a['Admin Notes']||'',readAt:a['Read At']||'',submittedAt:a['Submitted At']||'',approvedAt:a['Approved At']||'',createdAt:a['Created At']||'',updatedAt:a['Updated At']||''}));
+  state.activity=data.activity||[];state.uploads=data.uploads||[];
+  if(!state.selectedSection || !state.sections.some(s=>s.id==state.selectedSection)) state.selectedSection=state.sections[0]?.id||1;
 }
-
-/****************************************************
- DATA
-****************************************************/
-
-async function loadData(silent = true){
-  if(!sessionToken){
-    showLogin();
-    return;
-  }
-
-  if(isSyncing) return;
-
-  isSyncing = true;
-  setLive("syncing","Syncing...");
-
-  try{
-    const res = await api({ action:"getPortalData" });
-
-    DATA = {
-      settings:res.settings || {},
-      sections:normalizeSections(res.sections || []),
-      options:normalizeOptions(res.options || {}),
-      users:res.users || [],
-      assignments:res.assignments || [],
-      activity:res.activity || []
-    };
-
-    currentUser = res.user || currentUser;
-
-    hideLogin();
-    setupUI();
-    render();
-
-    if(isEditingView()){
-      setLive("ok","Live sync paused while editing.");
-    }else{
-      setLive("ok","Live connection active. Last updated " + new Date().toLocaleTimeString());
-    }
-
-  }catch(err){
-    setLive("bad","Live inactive: " + err.message);
-
-    if(!silent){
-      toast(err.message,"bad");
-    }
-
-    const msg = String(err.message || "").toLowerCase();
-
-    if(msg.includes("session expired") || msg.includes("not logged in")){
-      showLogin();
-    }
-
-  }finally{
-    isSyncing = false;
-  }
+function sectionIdFromName(name){const s=state.sections.find(x=>x.title===name || `${x.id}. ${x.title}`===name);return s?Number(s.id):0}
+function safeArray(v){if(Array.isArray(v))return v;try{const p=JSON.parse(v||'[]');return Array.isArray(p)?p:[]}catch(e){return String(v||'').split(',').map(x=>x.trim()).filter(Boolean)}}
+function isEditingView(){return ['settings','team'].includes(currentView) || !!document.getElementById('adminUploadModal')}
+async function loadPortalData(silent=true){
+  if(!sessionToken){showLogin();return false}
+  if(isSyncing)return false;isSyncing=true;setLiveDot('syncing','Syncing...');
+  try{const data=await api({action:'getPortalData'});normalizeData(data);hideLogin();render();if(isEditingView()){setLiveDot('ok','Live sync paused while editing.')}else{setLiveDot('ok','Live data active. Last updated '+new Date().toLocaleTimeString())};return true}
+  catch(e){console.warn(e);setLiveDot('bad','Live data inactive: '+e.message);if(!silent)toast('Live data inactive: '+e.message,'bad');const msg=String(e.message||'').toLowerCase();if(msg.includes('session expired')||msg.includes('not logged in'))showLogin();return false}
+  finally{isSyncing=false}
 }
+function startLiveSync(){stopLiveSync();liveSyncTimer=setInterval(()=>{if(isEditingView()){setLiveDot('ok','Live sync paused while editing.');return}loadPortalData(true)},AUTO_SYNC_MS)}
+function stopLiveSync(){if(liveSyncTimer)clearInterval(liveSyncTimer);liveSyncTimer=null}
 
-function startAutoSync(){
-  stopAutoSync();
-
-  autoSyncTimer = setInterval(() => {
-    if(isEditingView()){
-      setLive("ok","Live sync paused while editing.");
-      return;
-    }
-
-    loadData(true);
-  },30000);
+function applyLogo(){const logoImg=$('logoImg');const logoBox=$('logoBox');if(!logoImg||!logoBox)return;if(state.logo){logoImg.src=state.logo;logoBox.classList.add('has-img')}else{logoImg.removeAttribute('src');logoBox.classList.remove('has-img')}}
+function syncRoleUI(){
+  const roleSelect=$('roleSelect'), userSelect=$('userSelect'); if(roleSelect) roleSelect.classList.add('hidden'); if(userSelect) userSelect.classList.add('hidden');
+  const chip=document.querySelector('.user-chip'); if(chip){chip.innerHTML=`<div class="avatar">${esc(initials(currentUser?.name))}</div><div><div style="font-size:13px;font-weight:750">${esc(currentUser?.name||'User')}</div><div class="signout" onclick="logout()">Sign out • ${esc(currentUser?.role||'')}</div></div>`}
+  document.body.classList.toggle('viewer-locked',!isOwner());
+  document.querySelectorAll('[data-owner-only]').forEach(el=>el.classList.toggle('hidden',!isOwner()));
+  const upload=$('adminUploadButton'); if(upload) upload.classList.toggle('hidden',!isOwner());
+  document.querySelectorAll('.nav-item').forEach(el=>{if(!isOwner()) el.classList.toggle('hidden',el.dataset.view!=='documents'); else el.classList.remove('hidden')});
 }
-
-function stopAutoSync(){
-  if(autoSyncTimer) clearInterval(autoSyncTimer);
-  autoSyncTimer = null;
-}
-
-function normalizeSections(sections){
-  return sections.map(s => ({
-    id:Number(s.id || s["Section ID"] || 0),
-    title:s.title || s.Title || "",
-    owner:s.owner || s.Owner || "",
-    department:s.department || s.Department || "",
-    pct:Number(s.pct || s.Progress || 0),
-    desc:s.desc || s.Description || "",
-    subsections:Array.isArray(s.subsections) ? s.subsections : safeArray(s.Subsections),
-    folderId:s.folderId || s["Folder ID"] || ""
-  })).filter(s => s.id);
-}
-
-function normalizeOptions(options){
-  return {
-    teams:options.teams || [],
-    departments:options.departments || [],
-    fileGroups:options.fileGroups || [],
-    documentTypes:options.documentTypes || [],
-    actionOptions:options.actionOptions || []
-  };
-}
-
-function safeArray(value){
-  if(Array.isArray(value)) return value;
-
-  try{
-    const parsed = JSON.parse(value || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  }catch(e){
-    return String(value || "")
-      .split(",")
-      .map(x => x.trim())
-      .filter(Boolean);
-  }
-}
-
-/****************************************************
- UI HELPERS
-****************************************************/
-
-function setupUI(){
-  document.querySelectorAll(".admin-only").forEach(el => {
-    el.classList.toggle("hidden", !isAdmin());
-  });
-
-  $("loggedInName").textContent = currentUser ? `${currentUser.name} • ${currentUser.role}` : "Not logged in";
-  $("userAvatar").textContent = initials(currentUser?.name);
-
-  if(!isAdmin() && ["dashboard","create","approvals","people","settings"].includes(currentView)){
-    currentView = "documents";
-  }
-}
-
-function applyLogo(){
-  const logo = DATA.settings?.logoDataUrl || "";
-  const box = $("logoBox");
-  const img = $("logoImg");
-
-  if(!box || !img) return;
-
-  if(logo){
-    img.src = logo;
-    box.classList.add("has-img");
-  }else{
-    img.removeAttribute("src");
-    box.classList.remove("has-img");
-  }
-}
-
-function go(view){
-  if(!isAdmin() && view !== "documents"){
-    view = "documents";
-  }
-
-  currentView = view;
-
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.view === view));
-
-  const target = $(view + "View");
-  if(target) target.classList.add("active");
-
-  const titles = {
-    dashboard:["Dashboard","Company-wide progress"],
-    documents:[isAdmin() ? "Documents" : "Assigned Documents", isAdmin() ? "All assignments" : "Only your assigned documents"],
-    create:["Create Assignment","Upload and assign a document"],
-    approvals:["Review Queue","Approve or request revision"],
-    people:["People","Manage users and access codes"],
-    settings:["Settings","Logo, sections, teams, departments, and options"]
-  };
-
-  $("pageTitle").textContent = titles[view]?.[0] || "Portal";
-  $("pageSub").textContent = titles[view]?.[1] || "";
-
-  if(isEditingView()){
-    setLive("ok","Live sync paused while editing.");
-  }
-
-  render();
-}
-
-function myAssignments(){
-  if(isAdmin()) return DATA.assignments || [];
-
-  return (DATA.assignments || []).filter(a =>
-    String(a["Assigned To"]) === String(currentUser?.name)
-  );
-}
-
-function counts(list = myAssignments()){
-  return {
-    total:list.length,
-    completed:list.filter(a => a.Status === "Approved" || a.Status === "Completed").length,
-    review:list.filter(a => a.Status === "In Review" || a.Status === "Waiting on Approval").length,
-    revision:list.filter(a => a.Status === "Needs Revision").length,
-    read:list.filter(a => a.Status === "Read").length
-  };
-}
-
-function badge(status){
-  let c = "b-assigned";
-
-  if(status === "Read") c = "b-read";
-  if(status === "In Review" || status === "Waiting on Approval") c = "b-wait";
-  if(status === "Approved" || status === "Completed") c = "b-done";
-  if(status === "Needs Revision") c = "b-rev";
-
-  return `<span class="badge ${c}">${esc(status || "Assigned")}</span>`;
-}
-
-function render(){
-  setupUI();
-  applyLogo();
-
-  renderDashboard();
-  renderDocuments();
-  renderCreate();
-  renderApprovals();
-  renderPeople();
-  renderSettings();
-}
-
-/****************************************************
- DASHBOARD
-****************************************************/
-
-function renderDashboard(){
-  if(!isAdmin()) return;
-
-  const c = counts(DATA.assignments || []);
-
-  $("dashboardView").innerHTML = `
-    <div class="notice">
-      <strong>Admin view:</strong> You can manage assignments, approvals, people, logo, sections, teams, departments, and settings.
-    </div>
-
-    <div class="cards">
-      <div class="card stat"><div class="stat-num">${c.total}</div><div class="stat-lbl">Total Documents</div></div>
-      <div class="card stat"><div class="stat-num">${c.completed}</div><div class="stat-lbl">Completed</div></div>
-      <div class="card stat"><div class="stat-num">${c.review}</div><div class="stat-lbl">In Review</div></div>
-      <div class="card stat"><div class="stat-num">${c.revision}</div><div class="stat-lbl">Needs Revision</div></div>
-    </div>
-
-    <div class="card panel">
-      <div class="panel-head">
-        <div class="panel-title">Recent Assignments</div>
-        <button class="btn primary" onclick="go('create')">Create Assignment</button>
-      </div>
-      ${assignmentTable((DATA.assignments || []).slice().reverse().slice(0,12), true)}
-    </div>
-  `;
-}
-
-/****************************************************
- DOCUMENTS
-****************************************************/
-
-function renderDocuments(){
-  const list = myAssignments();
-  const c = counts(list);
-
-  $("documentsView").innerHTML = `
-    <div class="cards">
-      <div class="card stat"><div class="stat-num">${c.total}</div><div class="stat-lbl">Total Documents</div></div>
-      <div class="card stat"><div class="stat-num">${c.completed}</div><div class="stat-lbl">Completed</div></div>
-      <div class="card stat"><div class="stat-num">${c.review}</div><div class="stat-lbl">In Review</div></div>
-      <div class="card stat"><div class="stat-num">${c.revision}</div><div class="stat-lbl">Needs Revision</div></div>
-    </div>
-
-    <div class="card panel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">${isAdmin() ? "All Documents" : "Assigned Documents"}</div>
-          <div class="small">${isAdmin() ? "Admin can see all assignments." : "Only documents assigned to you are shown."}</div>
-        </div>
-      </div>
-      ${assignmentTable(list, isAdmin())}
-    </div>
-  `;
-}
-
-function assignmentTable(list, admin){
-  if(!list.length) return `<div class="empty">No documents found.</div>`;
-
-  return `
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:24%">Document</th>
-            <th style="width:28%">Instructions</th>
-            <th style="width:17%">Due / Status</th>
-            ${admin ? '<th>Assigned To / Actions</th>' : '<th style="width:31%">Submit Work</th>'}
-          </tr>
-        </thead>
-        <tbody>
-          ${list.map(a => rowHtml(a, admin)).join("")}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-function rowHtml(a, admin){
-  const url = a["Assignment File URL"] || "#";
-
-  if(admin){
-    return `
-      <tr>
-        <td>
-          <a class="doc-link" href="${esc(url)}" target="_blank">${esc(a["Document Name"])}</a>
-          <div class="small">${esc(a.Section)}<br>${esc(a.Subsection)}</div>
-        </td>
-        <td>${esc(a.Instructions || "")}</td>
-        <td>${esc(a["Due Date"] || "No due date")}<br>${badge(a.Status)}</td>
-        <td>
-          <strong>${esc(a["Assigned To"])}</strong><br>
-          ${a["Submitted File URL"] ? `<a class="doc-link" href="${esc(a["Submitted File URL"])}" target="_blank">Open submitted file</a><br>` : ""}
-          <button class="btn good" onclick="review('${esc(a["Assignment ID"])}','approveAssignment')">Approve</button>
-          <button class="btn bad" onclick="review('${esc(a["Assignment ID"])}','requestRevision')">Revision</button>
-        </td>
-      </tr>
-    `;
-  }
-
-  return `
-    <tr>
-      <td>
-        <a class="doc-link" href="${esc(url)}" target="_blank">${esc(a["Document Name"])}</a>
-        <div class="small">${esc(a.Section)}<br>${esc(a.Subsection)}</div>
-        <button class="btn" style="margin-top:8px" onclick="markRead('${esc(a["Assignment ID"])}')">Mark Read</button>
-      </td>
-      <td>${esc(a.Instructions || "")}</td>
-      <td>${esc(a["Due Date"] || "No due date")}<br>${badge(a.Status)}</td>
-      <td>${submitBox(a)}</td>
-    </tr>
-  `;
-}
-
-function submitBox(a){
-  const id = a["Assignment ID"];
-
-  return `
-    <div class="upload-box">
-      <input type="file" id="file_${esc(id)}">
-      <button class="btn aqua" onclick="submitWork('${esc(id)}')">Submit File</button>
-      <textarea class="upload-note" id="note_${esc(id)}" placeholder="Optional note"></textarea>
-      <div class="status-msg" id="msg_${esc(id)}">
-        ${a["Submitted File URL"] ? `Submitted: <a href="${esc(a["Submitted File URL"])}" target="_blank">Open file</a>` : "Choose file, then Submit File."}
-      </div>
-    </div>
-  `;
-}
-
-async function markRead(id){
-  try{
-    await api({
-      action:"markRead",
-      assignmentId:id
-    });
-
-    await loadData(true);
-    toast("Marked as read.");
-
-  }catch(err){
-    toast(err.message,"bad");
-  }
-}
-
-async function submitWork(id){
-  const file = $("file_" + id)?.files[0];
-  const msg = $("msg_" + id);
-
-  if(!file){
-    msg.textContent = "Choose a file first.";
-    return;
-  }
-
-  msg.textContent = "Uploading...";
-
-  try{
-    const fileData = await fileToBase64(file);
-
-    await api({
-      action:"submitWork",
-      assignmentId:id,
-      notes:$("note_" + id)?.value || "",
-      fileName:file.name,
-      mimeType:file.type || "application/octet-stream",
-      fileData
-    });
-
-    msg.textContent = "Submitted and waiting on approval.";
-    await loadData(true);
-    toast("Submitted for approval.");
-
-  }catch(err){
-    msg.textContent = "Upload failed: " + err.message;
-  }
-}
-
-/****************************************************
- CREATE ASSIGNMENT
-****************************************************/
-
-function renderCreate(){
-  if(!isAdmin()) return;
-
-  const viewers = (DATA.users || []).filter(u =>
-    u.Role === "Viewer" &&
-    String(u.Active).toUpperCase() !== "FALSE"
-  );
-
-  $("createView").innerHTML = `
-    <div class="editing-banner">
-      Live refresh is paused on this page so your assignment draft does not disappear before you publish it.
-    </div>
-
-    <div class="card panel">
-      <div class="panel-title">Create Assignment</div>
-
-      <div class="form-grid" style="margin-top:14px">
-        <div class="field">
-          <label>Assign To</label>
-          <select id="newAssigned">${viewers.map(u => `<option>${esc(u.Name)}</option>`).join("")}</select>
-        </div>
-
-        <div class="field">
-          <label>Section</label>
-          <select id="newSection" onchange="fillSubsections()">
-            ${(DATA.sections || []).map(s => `<option value="${s.id}">${esc(s.id)}. ${esc(s.title)}</option>`).join("")}
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Subsection</label>
-          <select id="newSubsection"></select>
-        </div>
-
-        <div class="field">
-          <label>Department</label>
-          <select id="newDepartment">${(DATA.options.departments || []).map(d => `<option>${esc(d)}</option>`).join("")}</select>
-        </div>
-
-        <div class="field">
-          <label>Document Type</label>
-          <select id="newDocType">${(DATA.options.documentTypes || []).map(d => `<option>${esc(d)}</option>`).join("")}</select>
-        </div>
-
-        <div class="field">
-          <label>File Group</label>
-          <select id="newFileGroup">${(DATA.options.fileGroups || []).map(d => `<option>${esc(d)}</option>`).join("")}</select>
-        </div>
-
-        <div class="field">
-          <label>Document Name</label>
-          <input id="newName" placeholder="Defaults to file name">
-        </div>
-
-        <div class="field">
-          <label>Due Date</label>
-          <input id="newDue" type="date">
-        </div>
-
-        <div class="field">
-          <label>Required Action</label>
-          <select id="newAction">${(DATA.options.actionOptions || []).map(a => `<option value="${esc(a.value)}">${esc(a.label)}</option>`).join("")}</select>
-        </div>
-
-        <div class="field full">
-          <label>Instructions</label>
-          <textarea id="newInstructions"></textarea>
-        </div>
-
-        <div class="field full">
-          <label>Assignment File</label>
-          <input id="newFile" type="file">
-        </div>
-
-        <div class="field full">
-          <button class="btn primary" onclick="createAssignment()">Create Assignment</button>
-          <div class="small" id="newMsg" style="margin-top:8px"></div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  fillSubsections();
-}
-
-function fillSubsections(){
-  const id = Number($("newSection")?.value || 0);
-  const sec = (DATA.sections || []).find(s => Number(s.id) === id);
-
-  if($("newSubsection")){
-    $("newSubsection").innerHTML = (sec?.subsections || []).map(s => `<option>${esc(s)}</option>`).join("");
-  }
-
-  if($("newDepartment") && sec?.department){
-    $("newDepartment").value = sec.department;
-  }
-}
-
-async function createAssignment(){
-  const file = $("newFile").files[0];
-
-  if(!file){
-    $("newMsg").textContent = "Choose the assignment file first.";
-    return;
-  }
-
-  $("newMsg").textContent = "Creating assignment...";
-
-  try{
-    const fileData = await fileToBase64(file);
-
-    await api({
-      action:"createAssignment",
-      sectionId:Number($("newSection").value),
-      subsection:$("newSubsection").value,
-      department:$("newDepartment").value,
-      documentType:$("newDocType").value,
-      fileGroup:$("newFileGroup").value,
-      requiredAction:$("newAction").value,
-      documentName:$("newName").value || file.name,
-      assignedTo:$("newAssigned").value,
-      dueDate:$("newDue").value,
-      instructions:$("newInstructions").value,
-      fileName:file.name,
-      mimeType:file.type || "application/octet-stream",
-      fileData
-    });
-
-    $("newMsg").textContent = "Assignment created.";
-    await loadData(true);
-    go("dashboard");
-    toast("Assignment created.");
-
-  }catch(err){
-    $("newMsg").textContent = "Error: " + err.message;
-  }
-}
-
-/****************************************************
- APPROVALS
-****************************************************/
-
-function renderApprovals(){
-  if(!isAdmin()) return;
-
-  const list = (DATA.assignments || []).filter(a =>
-    a.Status === "In Review" ||
-    a.Status === "Waiting on Approval"
-  );
-
-  $("approvalsView").innerHTML = `
-    <div class="card panel">
-      <div class="panel-head">
-        <div class="panel-title">Review Queue</div>
-      </div>
-      ${assignmentTable(list,true)}
-    </div>
-  `;
-}
-
-async function review(id, action){
-  const adminNotes = prompt("Admin notes, optional:") || "";
-
-  try{
-    await api({
-      action,
-      assignmentId:id,
-      adminNotes
-    });
-
-    await loadData(true);
-    toast("Review updated.");
-
-  }catch(err){
-    toast(err.message,"bad");
-  }
-}
-
-/****************************************************
- PEOPLE
-****************************************************/
-
-function renderPeople(){
-  if(!isAdmin()) return;
-
-  $("peopleView").innerHTML = `
-    <div class="editing-banner">
-      Live refresh is paused on this page so your people/user edits do not disappear before you save them.
-    </div>
-
-    <div class="card panel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">People & Access</div>
-          <div class="small">Antonio Siller is protected as permanent Admin.</div>
-        </div>
-        <button class="btn primary" onclick="addPersonLocal()">+ Add Person</button>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Team</th>
-              <th>Department</th>
-              <th>Code</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(DATA.users || []).map((u,i) => `
-              <tr>
-                <td><input value="${esc(u.Name)}" ${u.Name === "Antonio Siller" ? "disabled" : ""} onchange="DATA.users[${i}].Name=this.value"></td>
-                <td><input value="${esc(u.Email || "")}" onchange="DATA.users[${i}].Email=this.value"></td>
-                <td>
-                  <select ${u.Name === "Antonio Siller" ? "disabled" : ""} onchange="DATA.users[${i}].Role=this.value">
-                    <option ${u.Role === "Admin" ? "selected" : ""}>Admin</option>
-                    <option ${u.Role === "Viewer" ? "selected" : ""}>Viewer</option>
-                  </select>
-                </td>
-                <td><input value="${esc(u.Team || "")}" onchange="DATA.users[${i}].Team=this.value"></td>
-                <td><input value="${esc(u.Department || "")}" onchange="DATA.users[${i}].Department=this.value"></td>
-                <td><input value="${esc(u["Access Code"] || "")}" onchange="DATA.users[${i}]['Access Code']=this.value"></td>
-                <td>${u.Name === "Antonio Siller" ? "Protected" : `<button class="btn bad" onclick="removePersonLocal(${i})">Remove</button>`}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-
-      <div style="margin-top:12px">
-        <button class="btn primary" onclick="saveUsers()">Save Users</button>
-      </div>
-    </div>
-  `;
-}
-
-function addPersonLocal(){
-  DATA.users.push({
-    "User ID":"",
-    Name:"New Person",
-    Email:"",
-    Role:"Viewer",
-    Team:"",
-    Department:"",
-    Active:"TRUE",
-    "Access Code":""
-  });
-
-  renderPeople();
-}
-
-function removePersonLocal(i){
-  if(!confirm("Remove this person?")) return;
-
-  DATA.users.splice(i,1);
-  renderPeople();
-}
-
-async function saveUsers(){
-  try{
-    setLive("syncing","Saving users...");
-
-    await api({
-      action:"saveUsers",
-      users:DATA.users
-    });
-
-    toast("Users saved.");
-    setLive("ok","Users saved to database.");
-
-    await loadData(true);
-
-  }catch(err){
-    toast(err.message,"bad");
-    setLive("bad","Save failed: " + err.message);
-  }
-}
-
-/****************************************************
- SETTINGS
-****************************************************/
-
-function renderSettings(){
-  if(!isAdmin()) return;
-
-  $("settingsView").innerHTML = `
-    <div class="editing-banner">
-      Live refresh is paused on this page. Your updates become permanent after you click Save Sections, Save Options, or upload/remove the logo.
-    </div>
-
-    <div class="grid2">
-      <div class="card panel">
-        <div class="panel-title">Brand Settings</div>
-        <div class="form-grid" style="margin-top:14px">
-          <div class="field full">
-            <label>Upload Logo</label>
-            <input type="file" accept="image/*" onchange="uploadLogo(event)">
-          </div>
-          <div class="field full">
-            <button class="btn" onclick="removeLogo()">Remove Logo</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card panel">
-        <div class="panel-title">Portal Options</div>
-        <div class="small" style="margin-top:10px">
-          Settings save to Google Sheets. Google Sheets is the source of truth for the website.
-        </div>
-      </div>
-    </div>
-
-    <div class="card panel" style="margin-top:16px">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Sections / Categories</div>
-          <div class="small">Edit sections and subsections. Put each subsection on its own line.</div>
-        </div>
-        <button class="btn primary" onclick="addSectionLocal()">+ Add Section</button>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:7%">No.</th>
-              <th>Title</th>
-              <th>Owner</th>
-              <th>Department</th>
-              <th style="width:7%">%</th>
-              <th>Description</th>
-              <th>Subsections</th>
-              <th>Folder ID</th>
-              <th style="width:9%">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(DATA.sections || []).map((s,i) => `
-              <tr>
-                <td><input type="number" value="${esc(s.id)}" onchange="DATA.sections[${i}].id=Number(this.value)"></td>
-                <td><input value="${esc(s.title)}" onchange="DATA.sections[${i}].title=this.value"></td>
-                <td><input value="${esc(s.owner || "")}" onchange="DATA.sections[${i}].owner=this.value"></td>
-                <td><input value="${esc(s.department || "")}" onchange="DATA.sections[${i}].department=this.value"></td>
-                <td><input type="number" value="${esc(s.pct || 0)}" onchange="DATA.sections[${i}].pct=Number(this.value)"></td>
-                <td><input value="${esc(s.desc || "")}" onchange="DATA.sections[${i}].desc=this.value"></td>
-                <td><textarea onchange="DATA.sections[${i}].subsections=this.value.split('\\n').map(x=>x.trim()).filter(Boolean)">${esc((s.subsections || []).join("\\n"))}</textarea></td>
-                <td><input value="${esc(s.folderId || "")}" onchange="DATA.sections[${i}].folderId=this.value"></td>
-                <td><button class="btn bad" onclick="removeSectionLocal(${i})">Remove</button></td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-
-      <div style="margin-top:12px">
-        <button class="btn primary" onclick="saveSections()">Save Sections</button>
-      </div>
-    </div>
-
-    <div class="grid2" style="margin-top:16px">
-      <div class="card panel">
-        <div class="panel-title">Teams</div>
-        ${optionBlock("teams","Team")}
-      </div>
-
-      <div class="card panel">
-        <div class="panel-title">Departments</div>
-        ${optionBlock("departments","Department")}
-      </div>
-
-      <div class="card panel">
-        <div class="panel-title">File Groups</div>
-        ${optionBlock("fileGroups","File Group")}
-      </div>
-
-      <div class="card panel">
-        <div class="panel-title">Document Types</div>
-        ${optionBlock("documentTypes","Document Type")}
-      </div>
-    </div>
-
-    <div class="card panel" style="margin-top:16px">
-      <div class="panel-title">Required Action Types</div>
-      ${actionOptionBlock()}
-      <div style="margin-top:12px">
-        <button class="btn primary" onclick="saveOptions()">Save Options</button>
-      </div>
-    </div>
-  `;
-}
-
-function optionBlock(key,label){
-  return `
-    <div class="option-list" style="margin-top:12px">
-      ${(DATA.options[key] || []).map((v,i) => `
-        <div class="option-row">
-          <input value="${esc(v)}" onchange="DATA.options['${key}'][${i}]=this.value">
-          <button class="btn bad" onclick="DATA.options['${key}'].splice(${i},1);renderSettings()">Remove</button>
-        </div>
-      `).join("")}
-      <button class="btn" onclick="DATA.options['${key}'].push('New ${esc(label)}');renderSettings()">+ Add ${esc(label)}</button>
-    </div>
-  `;
-}
-
-function actionOptionBlock(){
-  const list = DATA.options.actionOptions || [];
-
-  return `
-    <div class="option-list" style="margin-top:12px">
-      ${list.map((a,i) => `
-        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px">
-          <input value="${esc(a.value)}" placeholder="value" onchange="DATA.options.actionOptions[${i}].value=this.value">
-          <input value="${esc(a.label)}" placeholder="label" onchange="DATA.options.actionOptions[${i}].label=this.value">
-          <button class="btn bad" onclick="DATA.options.actionOptions.splice(${i},1);renderSettings()">Remove</button>
-        </div>
-      `).join("")}
-      <button class="btn" onclick="DATA.options.actionOptions.push({value:'new_action',label:'New Action'});renderSettings()">+ Add Action</button>
-    </div>
-  `;
-}
-
-function addSectionLocal(){
-  DATA.sections.push({
-    id:Math.max(0,...DATA.sections.map(s => Number(s.id) || 0)) + 1,
-    title:"New Section",
-    owner:"",
-    department:"",
-    pct:0,
-    desc:"",
-    subsections:["New Subsection"],
-    folderId:""
-  });
-
-  renderSettings();
-}
-
-function removeSectionLocal(i){
-  if(!confirm("Remove this section?")) return;
-
-  DATA.sections.splice(i,1);
-  renderSettings();
-}
-
-async function saveSections(){
-  try{
-    setLive("syncing","Saving sections...");
-
-    await api({
-      action:"saveSections",
-      sections:DATA.sections
-    });
-
-    toast("Sections saved.");
-    setLive("ok","Sections saved to database.");
-
-    await loadData(true);
-
-  }catch(err){
-    toast(err.message,"bad");
-    setLive("bad","Save failed: " + err.message);
-  }
-}
-
-async function saveOptions(){
-  try{
-    setLive("syncing","Saving options...");
-
-    await api({
-      action:"saveOptions",
-      options:DATA.options
-    });
-
-    toast("Options saved.");
-    setLive("ok","Options saved to database.");
-
-    await loadData(true);
-
-  }catch(err){
-    toast(err.message,"bad");
-    setLive("bad","Save failed: " + err.message);
-  }
-}
-
-async function uploadLogo(e){
-  const file = e.target.files[0];
-
-  if(!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = async () => {
-    try{
-      setLive("syncing","Saving logo...");
-
-      await api({
-        action:"saveLogo",
-        logoDataUrl:reader.result
-      });
-
-      toast("Logo saved.");
-      setLive("ok","Logo saved to database.");
-
-      await loadData(true);
-
-    }catch(err){
-      toast(err.message,"bad");
-      setLive("bad","Logo save failed: " + err.message);
-    }
-  };
-
-  reader.readAsDataURL(file);
-}
-
-async function removeLogo(){
-  try{
-    setLive("syncing","Removing logo...");
-
-    await api({
-      action:"saveLogo",
-      logoDataUrl:""
-    });
-
-    toast("Logo removed.");
-    setLive("ok","Logo removed from database.");
-
-    await loadData(true);
-
-  }catch(err){
-    toast(err.message,"bad");
-    setLive("bad","Logo remove failed: " + err.message);
-  }
-}
-
-/****************************************************
- BOOT
-****************************************************/
-
-if(sessionToken){
-  hideLogin();
-  loadData(false).then(startAutoSync);
-}else{
-  showLogin();
-  setLive("", "Not logged in");
-}
+function statusBadge(st){const s=String(st||'Assigned').toLowerCase();if(['approved','completed'].includes(s))return '<span class="badge b-read">Approved</span>';if(['in review','waiting on approval','submitted'].includes(s))return '<span class="badge b-wait">Waiting on Approval</span>';if(s==='needs revision'||s==='revision')return '<span class="badge b-bad">Needs Revision</span>';if(s==='read')return '<span class="badge b-open">Read</span>';return `<span class="badge b-pending">${esc(st||'Assigned')}</span>`}
+function isDocComplete(d){return ['Approved','Completed'].includes(d.status)}
+function progressForDocs(docs){const total=docs.length;const completed=docs.filter(isDocComplete).length;const submitted=docs.filter(d=>['In Review','Waiting on Approval','Submitted'].includes(d.status)).length;const revision=docs.filter(d=>d.status==='Needs Revision').length;return{total,completed,submitted,revision,percent:total?Math.round(completed/total*100):0}}
+function docCounts(){const docs=visibleDocs();return{total:docs.length,pending:docs.filter(d=>['In Review','Waiting on Approval','Submitted'].includes(d.status)).length,overdue:docs.filter(d=>d.due&&new Date(d.due)<new Date()&&!isDocComplete(d)).length,blocked:docs.filter(d=>d.status==='Needs Revision').length}}
+function updateNavCounts(){const c=docCounts();if($('navDocCount'))$('navDocCount').textContent=c.total;if($('navApprovalCount'))$('navApprovalCount').textContent=state.documents.filter(d=>['In Review','Waiting on Approval','Submitted'].includes(d.status)).length}
+function render(){if(!currentUser)return;applyLogo();syncRoleUI();renderDashboard();renderDocuments();renderTasks();renderLibrary();renderApprovals();renderRead();renderActivity();renderTeam();renderSettings();updateNavCounts();if(!isOwner())go('documents')}
+function go(view){if(!isOwner()&&view!=='documents')view='documents';currentView=view;if(isEditingView())setLiveDot('ok','Live sync paused while editing.');document.querySelectorAll('.nav-item').forEach(a=>a.classList.toggle('active',a.dataset.view===view));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(view+'View')?.classList.add('active');const titles={dashboard:['Dashboard','Overview of the company\'s progress'],documents:[isOwner()?'Documents':'Assigned Documents',isOwner()?'Admin assigns files; viewer completes and submits':'Your assigned documents only'],tasks:['Tasks','Checklist progress by section'],library:['File Library','All uploaded files by section'],approvals:['Approvals','Items waiting on owner review'],read:['Read Tracking','See opened and acknowledged documents'],activity:['Activity Log','Recent portal actions'],team:['Users & Access','Manage people, teams, departments, roles, and access codes'],settings:['Settings','Logo, teams, departments, sections, categories, and portal setup']};if($('pageTitle'))$('pageTitle').textContent=titles[view]?.[0]||'Portal';if($('pageSub'))$('pageSub').textContent=titles[view]?.[1]||'';window.scrollTo({top:0,behavior:'smooth'})}
+
+function renderDashboard(){const el=$('dashboardView');if(!el)return;if(!isOwner()){el.innerHTML='';return}const docs=state.documents;const p=progressForDocs(docs);const c=docCounts();const byPerson=state.people.map(person=>{const pd=state.documents.filter(d=>d.assigned===person.name);const prog=progressForDocs(pd);return{...person,items:pd.length,pct:prog.percent,completed:prog.completed}});
+  el.innerHTML=`<div class="notice"><strong>Admin view:</strong> This uses the full doc portal admin interface with live login/backend. You can manage logo, users, teams, departments, categories, sections, documents, approvals, and settings.</div><div class="cards"><div class="card stat"><div class="stat-num">${p.percent}%</div><div class="stat-lbl">Overall Progress</div><div class="stat-note">${p.completed} of ${p.total} approved</div></div><div class="card stat" onclick="go('approvals')"><div class="stat-num">${c.pending}</div><div class="stat-lbl">Waiting on Approval</div><div class="stat-note">${c.pending?'Review queue':'All caught up'}</div></div><div class="card stat"><div class="stat-num">${c.overdue}</div><div class="stat-lbl">Overdue</div><div class="stat-note">${c.overdue?'Needs attention':'On track'}</div></div><div class="card stat"><div class="stat-num">${c.blocked}</div><div class="stat-lbl">Needs Revision</div><div class="stat-note">${c.blocked?'Returned work':'No blockers'}</div></div></div><div class="grid2"><div class="card panel"><div class="panel-head"><div class="panel-title">Progress by Section</div></div>${state.sections.map(s=>{const sp=progressForDocs(docsForSection(s.id));return `<div class="section-row"><div class="section-name">${esc(s.id)}. ${esc(s.title)}</div><div class="bar"><span style="width:${sp.percent||s.pct||0}%"></span></div><div class="pct">${sp.percent||s.pct||0}%</div><div class="doc-count">${docsForSection(s.id).length} docs</div></div>`}).join('')}</div><div class="card panel"><div class="panel-head"><div class="panel-title">Progress by Person</div></div>${byPerson.map(p=>`<div class="person-row"><div class="person-name">${esc(p.name)}</div><div class="bar"><span style="width:${p.pct}%"></span></div><div class="pct">${p.pct}%</div><div class="doc-count">${p.items} items</div></div>`).join('')}</div></div><div class="grid2"><div class="card panel"><div class="panel-head"><div class="panel-title">Waiting on Approval</div><button class="small-btn" onclick="go('approvals')">Open queue →</button></div>${approvalTableMini()}</div><div class="card panel"><div class="panel-head"><div class="panel-title">Recent Activity</div></div>${activityList(7)}</div></div>`}
+function approvalTableMini(){const rows=state.documents.filter(d=>['In Review','Waiting on Approval','Submitted'].includes(d.status));return `<table><thead><tr><th>Document</th><th>From</th><th>Status</th></tr></thead><tbody>${rows.length?rows.map(d=>`<tr><td><strong>${esc(d.title)}</strong></td><td>${esc(d.assigned)}</td><td>${statusBadge(d.status)}</td></tr>`).join(''):`<tr><td colspan="3" class="empty">No items waiting on approval.</td></tr>`}</tbody></table>`}
+function activityList(n=20){const rows=(state.activity||[]).slice(0,n);return `<ul class="activity">${rows.length?rows.map(a=>`<li><span class="dot"></span><div><strong>${esc(a.User||a.user||'')}</strong> ${esc(a.Action||a.action||a.msg||'')} ${esc(a.Notes||a.notes||'')}</div><span class="time">${esc(formatDate(a.Timestamp||a.timestamp||a.stamp||''))}</span></li>`).join(''):`<li><span class="dot"></span><div>No activity yet.</div><span class="time">—</span></li>`}</ul>`}
+function formatDate(v){if(!v)return '—';try{return new Date(v).toLocaleDateString()}catch(e){return String(v)}}
+
+function renderDocuments(){const el=$('documentsView');if(!el)return;if(!isOwner())return renderViewerDocuments();const selected=sectionById(state.selectedSection)||state.sections[0];if(!selected){el.innerHTML='<div class="card panel"><div class="empty">No sections found. Go to Settings to add sections.</div></div>';return}state.selectedSection=selected.id;const docs=docsForSection(selected.id);el.innerHTML=`<div class="workspace-grid"><div class="card section-list">${state.sections.map(s=>`<div class="section-card ${s.id==state.selectedSection?'active':''}" onclick="selectSection(${s.id})"><h3>${esc(s.id)}. ${esc(s.title)}</h3><p>${esc(s.desc)}</p><div class="section-meta"><span>${esc(s.department||s.owner||'')}</span><span>${docsForSection(s.id).length} docs</span></div></div>`).join('')}</div><div class="card panel"><div class="panel-head"><div><div class="panel-title">${esc(selected.id)}. ${esc(selected.title)} Documents</div><div class="muted" style="font-size:12px;margin-top:4px">Upload, assign, preview, approve, and request revisions from this section.</div></div><button class="primary-btn" onclick="openAdminUploadModal()">+ Upload Document</button></div><div class="doc-grid">${docs.length?docs.map(adminDocCard).join(''):'<div class="empty">No documents uploaded for this section yet.</div>'}</div></div></div>`}
+function renderViewerDocuments(){const el=$('documentsView');const docs=visibleDocs();if(!docs.length){el.innerHTML=`<div class="viewer-canvas"><div class="card panel viewer-empty"><div class="panel-title">Assigned Documents</div><p class="viewer-help">No documents are assigned to <strong>${esc(currentUser?.name)}</strong> yet.</p></div></div>`;return}const p=progressForDocs(docs);const grouped=groupDocs(docs);el.innerHTML=`<div class="viewer-canvas"><div class="viewer-progress"><div class="viewer-progress-head"><div><div class="viewer-progress-title">My Document Progress</div><div class="viewer-progress-sub">Only your assigned documents are shown.</div></div><div class="viewer-progress-stats"><div class="viewer-progress-stat"><strong>${p.total}</strong><span>Total</span></div><div class="viewer-progress-stat"><strong>${p.completed}</strong><span>Completed</span></div><div class="viewer-progress-stat"><strong>${p.submitted}</strong><span>In Review</span></div><div class="viewer-progress-stat"><strong>${p.revision}</strong><span>Revision</span></div></div></div><div class="viewer-progress-bar"><span style="width:${p.percent}%"></span></div><div class="viewer-progress-foot"><span>${p.percent}% complete</span><span>${p.completed} of ${p.total} completed</span></div></div><div class="viewer-canvas-head"><h2>Assigned Documents</h2><p>Everything assigned to you is organized by section and subsection. Download the file, complete the work, and submit your finished file.</p></div><div class="viewer-section-content">${Object.keys(grouped).map(sec=>`<details class="viewer-chapter canvas-module" open><summary class="viewer-chapter-summary"><span>${esc(sec)}</span><span class="collapse-cue"></span></summary>${Object.keys(grouped[sec]).map(sub=>`<details class="viewer-subsection" open><summary class="viewer-subsection-summary"><div class="viewer-subsection-title">${esc(sub)}</div><span class="doc-count">${grouped[sec][sub].length} files</span><span class="collapse-cue"></span></summary><div class="viewer-resource-grid">${grouped[sec][sub].map(viewerDocCard).join('')}</div></details>`).join('')}</details>`).join('')}</div></div>`}
+function groupDocs(docs){const g={};docs.forEach(d=>{const sec=`${d.sectionId||''}. ${d.section||sectionById(d.sectionId)?.title||'Unassigned Section'}`;const sub=d.subsection||'General';g[sec]=g[sec]||{};g[sec][sub]=g[sec][sub]||[];g[sec][sub].push(d)});return g}
+function adminDocCard(d){return `<div class="doc-card"><div class="doc-top"><div><div class="doc-title">${esc(d.title)}</div><div class="doc-meta">Section: <strong>${esc(d.section)}</strong><br>Subsection: <strong>${esc(d.subsection)}</strong><br>Department: <strong>${esc(d.department||'—')}</strong><br>Type: <strong>${esc(d.docType)}</strong><br>Assigned to: <strong>${esc(d.assigned)}</strong><br>Due: ${esc(d.due||'No due date')}</div></div>${statusBadge(d.status)}</div><div class="doc-instructions"><strong>Instructions:</strong><br>${esc(d.instructions||'No instructions added.')}</div><div class="submission-box"><div class="doc-meta"><strong>Viewer notes:</strong><br>${esc(d.responseText||'No response yet.')}<br><br><strong>Submitted file:</strong> ${d.submittedFileUrl?`<a href="${esc(d.submittedFileUrl)}" target="_blank">Open submitted file</a>`:'None'}</div></div><div class="doc-actions">${d.fileUrl?`<button onclick="window.open('${esc(d.fileUrl)}','_blank')">Open Assignment</button>`:''}${d.submittedFileUrl?`<button onclick="window.open('${esc(d.submittedFileUrl)}','_blank')">Open Submission</button>`:''}<button class="approve" onclick="approveDoc('${esc(d.id)}')">Approve</button><button class="reject" onclick="revisionDoc('${esc(d.id)}')">Revision</button></div></div>`}
+function viewerDocCard(d){const waiting=['In Review','Waiting on Approval','Approved','Completed'].includes(d.status);return `<div class="viewer-resource-card"><div><div class="resource-type">${esc(d.docType)}</div><div class="resource-title">${esc(d.title)}</div><div class="resource-meta">Due: ${esc(d.due||'No due date')}<br>Required action: ${esc(actionLabel(d.action))}<br>${esc(d.instructions||'')}</div><div style="margin-top:9px">${statusBadge(d.status)}</div><div class="submission-box"><div class="field"><label>Optional Note</label><textarea class="mini-textarea" id="note_${esc(d.id)}" placeholder="Short note for admin...">${esc(d.responseText||'')}</textarea></div><div class="field" style="margin-top:9px"><label>Upload completed work</label><input type="file" id="file_${esc(d.id)}"></div><div class="doc-actions"><button onclick="markRead('${esc(d.id)}')">Mark Read</button><button class="submit ${waiting?'waiting':''}" ${waiting?'disabled':''} onclick="submitWork('${esc(d.id)}')">${waiting?'Submitted':'Submit File'}</button></div><div class="doc-meta">${d.submittedFileUrl?`Submitted: <a href="${esc(d.submittedFileUrl)}" target="_blank">Open submitted file</a>`:'No file submitted yet.'}</div></div></div><div class="resource-actions">${d.fileUrl?`<button onclick="window.open('${esc(d.fileUrl)}','_blank')">Open</button>`:''}</div></div>`}
+function selectSection(id){state.selectedSection=id;renderDocuments()}
+
+function openAdminUploadModal(){if(!isOwner())return;const selected=sectionById(state.selectedSection)||state.sections[0];closeAdminUploadModal();const viewers=state.people.filter(p=>p.role!=='Admin');document.body.insertAdjacentHTML('beforeend',`<div class="upload-modal" id="adminUploadModal"><div class="upload-modal-panel"><div class="upload-modal-head"><div><div class="panel-title">Upload Document</div><div class="muted" style="font-size:12px;margin-top:4px">Assign a file to a viewer, section, subsection, department, and category.</div></div><button class="small-btn" onclick="closeAdminUploadModal()">Close</button></div><div class="upload-modal-body"><div class="compact-upload-grid"><div class="field"><label>Assign To</label><select id="docAssigned">${viewers.map(p=>`<option>${esc(p.name)}</option>`).join('')}</select></div><div class="field"><label>Chapter / Category</label><select id="docSection" onchange="syncUploadSubsections()">${state.sections.map(s=>`<option value="${s.id}" ${selected&&s.id==selected.id?'selected':''}>${esc(s.id)}. ${esc(s.title)}</option>`).join('')}</select></div><div class="field"><label>Subsection</label><select id="docSubsection"></select></div><div class="field"><label>Department</label><select id="docDepartment">${getOptionList('departments').map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div class="field"><label>Document Type</label><select id="docType">${getOptionList('documentTypes').map(t=>`<option>${esc(t)}</option>`).join('')}</select></div><div class="field"><label>File Group</label><select id="docFolder">${getOptionList('fileGroups').map(t=>`<option>${esc(t)}</option>`).join('')}</select></div><div class="field"><label>Required Action</label><select id="docAction">${getOptionList('actionOptions').map(a=>`<option value="${esc(a.value)}">${esc(a.label)}</option>`).join('')}</select></div><div class="field"><label>Due Date</label><input id="docDue" type="date"></div><div class="field"><label>Document Name</label><input id="docTitle" placeholder="Defaults to uploaded file name"></div><div class="field full"><label>Instructions</label><textarea id="docInstructions" placeholder="What should the viewer do with this file?"></textarea></div><div class="field full"><label>File</label><div class="file-drop">Choose the file to send to the viewer.<br><input id="docFile" type="file"></div></div></div><div class="upload-modal-actions"><button class="small-btn" onclick="closeAdminUploadModal()">Cancel</button><button class="primary-btn" onclick="addDocument()">Publish Assignment</button></div></div></div></div>`);syncUploadSubsections()}
+function closeAdminUploadModal(){$('adminUploadModal')?.remove()}
+function syncUploadSubsections(){const s=sectionById($('docSection')?.value);const sub=$('docSubsection');if(s&&sub)sub.innerHTML=(s.subsections||[]).map(x=>`<option>${esc(x)}</option>`).join('');const dep=$('docDepartment');if(dep&&s?.department)dep.value=s.department}
+async function addDocument(){const file=$('docFile')?.files[0];if(!file){toast('Choose a file first.','bad');return}const sectionId=Number($('docSection').value);const s=sectionById(sectionId);try{const fileData=await fileToBase64(file);await api({action:'createAssignment',sectionId,section:s?.title||'',subsection:$('docSubsection').value,department:$('docDepartment').value,documentName:$('docTitle').value.trim()||file.name,assignedTo:$('docAssigned').value,dueDate:$('docDue').value,instructions:$('docInstructions').value,requiredAction:$('docAction').value,documentType:$('docType').value,fileGroup:$('docFolder').value,fileName:file.name,mimeType:file.type||'application/octet-stream',fileData});closeAdminUploadModal();toast('Assignment published.');await loadPortalData(false)}catch(e){toast(e.message,'bad')}}
+async function markRead(id){try{await api({action:'markRead',assignmentId:id});toast('Marked as read.');await loadPortalData(true)}catch(e){toast(e.message,'bad')}}
+async function submitWork(id){const file=$('file_'+id)?.files[0];const notes=$('note_'+id)?.value||'';if(!file){toast('Choose a completed file first.','bad');return}try{const fileData=await fileToBase64(file);await api({action:'submitWork',assignmentId:id,notes,fileName:file.name,mimeType:file.type||'application/octet-stream',fileData});toast('Submitted for approval.');await loadPortalData(true)}catch(e){toast(e.message,'bad')}}
+async function approveDoc(id){try{await api({action:'approveAssignment',assignmentId:id,adminNotes:''});toast('Approved.');await loadPortalData(true)}catch(e){toast(e.message,'bad')}}
+async function revisionDoc(id){const adminNotes=prompt('Revision notes, optional:')||'';try{await api({action:'requestRevision',assignmentId:id,adminNotes});toast('Revision requested.');await loadPortalData(true)}catch(e){toast(e.message,'bad')}}
+
+function renderTasks(){const el=$('tasksView');if(!el)return;const rows=state.sections.map(s=>{const pd=docsForSection(s.id);const prog=progressForDocs(pd);return{...s,docCount:pd.length,prog}});el.innerHTML=`<div class="card panel"><div class="panel-head"><div><div class="panel-title">Tasks / Section Progress</div><p class="muted" style="font-size:13px;margin-top:6px">Task tracking is now tied to sections, departments, owners, and document progress.</p></div></div><table class="task-table"><thead><tr><th>Section</th><th>Department</th><th>Owner</th><th>Documents</th><th>Progress</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r.id)}. ${esc(r.title)}</strong></td><td>${esc(r.department||'—')}</td><td><span class="task-owner">${esc(r.owner||'—')}</span></td><td>${r.docCount}</td><td>${r.prog.percent}%</td></tr>`).join('')}</tbody></table></div>`}
+function renderLibrary(){const el=$('libraryView');if(!el)return;const docs=visibleDocs();el.innerHTML=`<div class="card panel"><div class="panel-head"><div class="panel-title">File Library</div>${isOwner()?`<button class="small-btn" onclick="openAdminUploadModal()">Upload new file →</button>`:''}</div><table><thead><tr><th>File</th><th>Section / Subsection</th><th>Assigned</th><th>Status</th><th>Action</th></tr></thead><tbody>${docs.length?docs.map(d=>`<tr><td><strong>${esc(d.title)}</strong></td><td>${esc(d.section)}<br><span class="muted">${esc(d.subsection)}</span></td><td>${esc(d.assigned)}</td><td>${statusBadge(d.status)}</td><td>${d.fileUrl?`<button class="small-btn" onclick="window.open('${esc(d.fileUrl)}','_blank')">Open</button>`:'—'}</td></tr>`).join(''):`<tr><td colspan="5" class="empty">No files visible.</td></tr>`}</tbody></table></div>`}
+function renderApprovals(){const el=$('approvalsView');if(!el)return;const rows=state.documents.filter(d=>['In Review','Waiting on Approval','Submitted','Needs Revision'].includes(d.status));el.innerHTML=`<div class="card panel"><div class="panel-head"><div class="panel-title">Waiting on Approval Queue</div></div><table><thead><tr><th>Document</th><th>Section</th><th>From</th><th>Status</th><th>Submitted File</th><th>Actions</th></tr></thead><tbody>${rows.length?rows.map(d=>`<tr><td><strong>${esc(d.title)}</strong></td><td>${esc(d.section)}<br><span class="muted">${esc(d.subsection)}</span></td><td>${esc(d.assigned)}</td><td>${statusBadge(d.status)}</td><td>${d.submittedFileUrl?`<a href="${esc(d.submittedFileUrl)}" target="_blank">Open file</a>`:'No file'}</td><td><button class="small-btn" onclick="approveDoc('${esc(d.id)}')">Approve</button> <button class="small-btn" onclick="revisionDoc('${esc(d.id)}')">Revision</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">No submissions waiting on approval.</td></tr>`}</tbody></table></div>`}
+function renderRead(){const el=$('readView');if(!el)return;el.innerHTML=`<div class="card panel"><div class="panel-title">Read Tracking</div><table style="margin-top:15px"><thead><tr><th>Document</th><th>Assigned</th><th>Status</th><th>Read At</th><th>Submitted At</th></tr></thead><tbody>${state.documents.length?state.documents.map(d=>`<tr><td><strong>${esc(d.title)}</strong></td><td>${esc(d.assigned)}</td><td>${statusBadge(d.status)}</td><td>${esc(formatDate(d.readAt))}</td><td>${esc(formatDate(d.submittedAt))}</td></tr>`).join(''):`<tr><td colspan="5" class="empty">No read tracking yet.</td></tr>`}</tbody></table></div>`}
+function renderActivity(){const el=$('activityView');if(!el)return;el.innerHTML=`<div class="card panel"><div class="panel-head"><div class="panel-title">Activity Log</div></div>${activityList(80)}</div>`}
+function renderTeam(){const el=$('teamView');if(!el)return;if(!isOwner()){el.innerHTML='';return}el.innerHTML=`<div class="card panel"><div class="panel-head"><div><div class="panel-title">Users & Access</div><p class="muted" style="font-size:13px;margin-top:6px">Edit users, teams, departments, roles, and access codes.</p></div><button class="primary-btn" onclick="addPersonLocal()">+ Add Person</button></div><div class="admin-note"><strong>Creator protection:</strong> Antonio Siller always keeps Admin access.</div><table class="settings-table"><thead><tr><th>Name</th><th>Email</th><th>Team</th><th>Department</th><th>Access</th><th>Code</th><th>Action</th></tr></thead><tbody>${state.people.map((p,i)=>`<tr><td><input value="${esc(p.name)}" ${p.name==='Antonio Siller'?'disabled':''} onchange="updatePersonLocal(${i},'name',this.value)"></td><td><input value="${esc(p.email)}" onchange="updatePersonLocal(${i},'email',this.value)"></td><td><input list="teamOptions" value="${esc(p.team)}" onchange="updatePersonLocal(${i},'team',this.value)"></td><td><input list="departmentOptions" value="${esc(p.department||'')}" onchange="updatePersonLocal(${i},'department',this.value)"></td><td><select ${p.name==='Antonio Siller'?'disabled':''} onchange="updatePersonLocal(${i},'role',this.value)"><option value="Admin" ${p.role==='Admin'?'selected':''}>Admin</option><option value="Viewer" ${p.role==='Viewer'?'selected':''}>Viewer</option></select></td><td><input value="${esc(p.accessCode||'')}" onchange="updatePersonLocal(${i},'accessCode',this.value)"></td><td>${p.name==='Antonio Siller'?'Protected':`<button class="danger-btn" onclick="removePersonLocal(${i})">Remove</button>`}</td></tr>`).join('')}</tbody></table><datalist id="teamOptions">${getOptionList('teams').map(t=>`<option value="${esc(t)}"></option>`).join('')}</datalist><datalist id="departmentOptions">${getOptionList('departments').map(t=>`<option value="${esc(t)}"></option>`).join('')}</datalist><div class="inline-actions"><button class="primary-btn" onclick="saveUsersLive()">Save Users</button></div></div>`}
+function addPersonLocal(){state.people.push({name:'New Person',email:'',role:'Viewer',team:'',department:'',active:'TRUE',accessCode:''});renderTeam()}
+function updatePersonLocal(i,f,v){if(!state.people[i])return;if(state.people[i].name==='Antonio Siller'&&(f==='name'||f==='role'))return;state.people[i][f]=v;if(f==='team'&&v&&!getOptionList('teams').includes(v))state.options.teams.push(v);if(f==='department'&&v&&!getOptionList('departments').includes(v))state.options.departments.push(v)}
+function removePersonLocal(i){const p=state.people[i];if(!p||p.name==='Antonio Siller')return;if(!confirm('Remove this person?'))return;state.people.splice(i,1);renderTeam()}
+async function saveUsersLive(){try{setLiveDot('syncing','Saving users...');await api({action:'saveUsers',users:state.people});toast('Users saved.');setLiveDot('ok','Users saved to database.');await loadPortalData(true)}catch(e){toast(e.message,'bad');setLiveDot('bad','Save failed: '+e.message)}}
+function renderSettings(){const el=$('settingsView');if(!el)return;if(!isOwner()){el.innerHTML='';return}el.innerHTML=`<div class="card panel"><div class="panel-head"><div><div class="panel-title">Editable Company Setup</div><p class="muted" style="font-size:13px;margin-top:6px">Manage logo, teams, departments, categories, file groups, document types, and action types.</p></div></div><div class="admin-note"><strong>Live settings:</strong> These settings save to Google Sheets and update the portal for everyone.</div></div><div class="admin-setup-grid"><div class="card panel"><div class="panel-title">Brand Settings</div><table class="settings-table" style="margin-top:15px"><tbody><tr><th>Logo</th><td><input type="file" accept="image/*" onchange="uploadLogoLive(event)"></td><td><button class="small-btn" onclick="removeLogoLive()">Remove Logo</button></td></tr></tbody></table></div><div class="card panel"><div class="panel-title">Access Types</div><table class="settings-table" style="margin-top:15px"><tbody><tr><th>Admin</th><td>Full portal control.</td></tr><tr><th>Viewer</th><td>Assigned documents only.</td></tr></tbody></table></div></div><div class="card panel"><div class="panel-head"><div><div class="panel-title">Sections / Categories / Chapters</div><p class="muted" style="font-size:13px;margin-top:6px">Edit main project categories and subsections.</p></div><button class="primary-btn" onclick="addSectionLocal()">+ Add Section</button></div><table class="settings-table"><thead><tr><th class="small-cell">No.</th><th>Section Name</th><th>Owner</th><th>Department</th><th class="small-cell">%</th><th>Description</th><th>Subsections</th><th>Folder ID</th><th class="actions-cell">Action</th></tr></thead><tbody>${state.sections.map((s,i)=>`<tr><td><input type="number" value="${esc(s.id)}" onchange="updateSectionLocal(${i},'id',this.value)"></td><td><input value="${esc(s.title)}" onchange="updateSectionLocal(${i},'title',this.value)"></td><td><input value="${esc(s.owner||'')}" onchange="updateSectionLocal(${i},'owner',this.value)"></td><td><input list="departmentOptions2" value="${esc(s.department||'')}" onchange="updateSectionLocal(${i},'department',this.value)"></td><td><input type="number" min="0" max="100" value="${esc(s.pct||0)}" onchange="updateSectionLocal(${i},'pct',this.value)"></td><td><input value="${esc(s.desc||'')}" onchange="updateSectionLocal(${i},'desc',this.value)"></td><td><textarea onchange="updateSectionSubsections(${i},this.value)">${esc((s.subsections||[]).join('\n'))}</textarea></td><td><input value="${esc(s.folderId||'')}" onchange="updateSectionLocal(${i},'folderId',this.value)"></td><td><button class="danger-btn" onclick="removeSectionLocal(${i})">Remove</button></td></tr>`).join('')}</tbody></table><datalist id="departmentOptions2">${getOptionList('departments').map(t=>`<option value="${esc(t)}"></option>`).join('')}</datalist><div class="inline-actions"><button class="primary-btn" onclick="saveSectionsLive()">Save Sections</button></div></div><div class="admin-setup-grid"><div class="card panel"><div class="panel-head"><div class="panel-title">Teams</div><button class="small-btn" onclick="addOptionLocal('teams','New Team')">+ Add</button></div>${optionEditor('teams','Team')}</div><div class="card panel"><div class="panel-head"><div class="panel-title">Departments</div><button class="small-btn" onclick="addOptionLocal('departments','New Department')">+ Add</button></div>${optionEditor('departments','Department')}</div></div><div class="admin-setup-grid"><div class="card panel"><div class="panel-head"><div class="panel-title">File Groups</div><button class="small-btn" onclick="addOptionLocal('fileGroups','New File Group')">+ Add</button></div>${optionEditor('fileGroups','File Group')}</div><div class="card panel"><div class="panel-head"><div class="panel-title">Document Types</div><button class="small-btn" onclick="addOptionLocal('documentTypes','New Document Type')">+ Add</button></div>${optionEditor('documentTypes','Document Type')}</div></div><div class="card panel"><div class="panel-head"><div class="panel-title">Required Action Types</div><button class="small-btn" onclick="addActionOptionLocal()">+ Add Action</button></div>${actionOptionEditor()}<div class="inline-actions"><button class="primary-btn" onclick="saveOptionsLive()">Save Options</button></div></div>`}
+function uploadLogoLive(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=async()=>{try{setLiveDot('syncing','Saving logo...');await api({action:'saveLogo',logoDataUrl:r.result});toast('Logo saved.');setLiveDot('ok','Logo saved to database.');await loadPortalData(true)}catch(err){toast(err.message,'bad');setLiveDot('bad','Logo save failed: '+err.message)}};r.readAsDataURL(file)}
+async function removeLogoLive(){try{setLiveDot('syncing','Removing logo...');await api({action:'saveLogo',logoDataUrl:''});toast('Logo removed.');setLiveDot('ok','Logo removed from database.');await loadPortalData(true)}catch(e){toast(e.message,'bad');setLiveDot('bad','Logo remove failed: '+e.message)}}
+function addSectionLocal(){const next=Math.max(0,...state.sections.map(s=>Number(s.id)||0))+1;state.sections.push({id:next,title:'New Section',owner:'',department:'',pct:0,desc:'',subsections:['New Subsection'],folderId:''});renderSettings()}
+function updateSectionLocal(i,f,v){if(!state.sections[i])return;state.sections[i][f]=(f==='id'||f==='pct')?Number(v)||0:v;if(f==='department'&&v&&!getOptionList('departments').includes(v))state.options.departments.push(v)}
+function updateSectionSubsections(i,v){if(!state.sections[i])return;state.sections[i].subsections=String(v||'').split('\n').map(x=>x.trim()).filter(Boolean)}
+function removeSectionLocal(i){if(!confirm('Remove this section?'))return;state.sections.splice(i,1);renderSettings()}
+async function saveSectionsLive(){try{setLiveDot('syncing','Saving sections...');await api({action:'saveSections',sections:state.sections});toast('Sections saved.');setLiveDot('ok','Sections saved to database.');await loadPortalData(true)}catch(e){toast(e.message,'bad');setLiveDot('bad','Save failed: '+e.message)}}
+function optionEditor(key,label){const list=getOptionList(key);return `<table class="settings-table"><thead><tr><th>${esc(label)}</th><th class="actions-cell">Action</th></tr></thead><tbody>${list.length?list.map((v,i)=>`<tr><td><input value="${esc(v)}" onchange="updateOptionLocal('${key}',${i},this.value)"></td><td><button class="danger-btn" onclick="removeOptionLocal('${key}',${i})">Remove</button></td></tr>`).join(''):`<tr><td colspan="2" class="empty">No options yet.</td></tr>`}</tbody></table>`}
+function addOptionLocal(k,v){state.options[k]=getOptionList(k).slice();state.options[k].push(v);renderSettings()}
+function updateOptionLocal(k,i,v){state.options[k]=getOptionList(k).slice();state.options[k][i]=v}
+function removeOptionLocal(k,i){state.options[k]=getOptionList(k).slice();state.options[k].splice(i,1);renderSettings()}
+function actionOptionEditor(){const list=getOptionList('actionOptions');return `<table class="settings-table"><thead><tr><th>Code</th><th>Label</th><th class="actions-cell">Action</th></tr></thead><tbody>${list.map((a,i)=>`<tr><td><input value="${esc(a.value)}" onchange="updateActionOptionLocal(${i},'value',this.value)"></td><td><input value="${esc(a.label)}" onchange="updateActionOptionLocal(${i},'label',this.value)"></td><td><button class="danger-btn" onclick="removeActionOptionLocal(${i})">Remove</button></td></tr>`).join('')}</tbody></table>`}
+function addActionOptionLocal(){state.options.actionOptions=getOptionList('actionOptions').slice();state.options.actionOptions.push({value:'custom_'+Date.now(),label:'New Action'});renderSettings()}
+function updateActionOptionLocal(i,f,v){state.options.actionOptions=getOptionList('actionOptions').slice();if(!state.options.actionOptions[i])return;state.options.actionOptions[i][f]=f==='value'?v.toLowerCase().replace(/[^a-z0-9_\-]/g,'_'):v}
+function removeActionOptionLocal(i){state.options.actionOptions=getOptionList('actionOptions').slice();state.options.actionOptions.splice(i,1);renderSettings()}
+async function saveOptionsLive(){try{setLiveDot('syncing','Saving options...');await api({action:'saveOptions',options:state.options});toast('Options saved.');setLiveDot('ok','Options saved to database.');await loadPortalData(true)}catch(e){toast(e.message,'bad');setLiveDot('bad','Save failed: '+e.message)}}
+
+function attachNav(){document.querySelectorAll('.nav-item').forEach(a=>{a.onclick=()=>go(a.dataset.view)})}
+function bootPortal(){injectLogin();attachNav();setLiveDot('',sessionToken?'Not synced yet':'Not logged in');if(sessionToken){loadPortalData(false).then(ok=>{if(ok)startLiveSync()})}else showLogin()}
+bootPortal();
 </script>
 
 </body>
 </html>
 git add .
-git commit -m "Fix settings save behavior and pause refresh while editing"
+git commit -m "Restore old portal format and fix settings save behavior"
 git push
